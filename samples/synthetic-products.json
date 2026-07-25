@@ -1,0 +1,17 @@
+[
+  {
+    "id": "product-demo-001",
+    "boutiqueId": "boutique-demo-001",
+    "name": "Blue Linen Blazer",
+    "sku": "LT-BLB-001",
+    "isSynthetic": true,
+    "category": "Blazer",
+    "priceUsd": 79.0,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["Ocean Blue"],
+    "publicationStatus": "Draft",
+    "readinessScore": 0,
+    "sourceImage": null,
+    "productUrl": "https://example.invalid/products/blue-linen-blazer"
+  }
+]
