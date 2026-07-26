@@ -5,11 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ClientAppRoot>$(MSBuildProjectDirectory)\..\..\apps\web</ClientAppRoot>
+    <UserSecretsId>TryOnReady-Api-a1f30745-5ef2-43e1-90ad-144089fb5c45</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +24,10 @@
     <ProjectReference Include="..\TryOnReady.YouCam\TryOnReady.YouCam.csproj" />
   </ItemGroup>
 
-  <Target Name="BuildClientApp" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target
+    Name="BuildClientApp"
+    BeforeTargets="Build"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(SkipClientBuild)' != 'true'">
     <Exec
       WorkingDirectory="$(ClientAppRoot)"
       Command="npm install --no-audit --no-fund"

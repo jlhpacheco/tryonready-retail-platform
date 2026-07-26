@@ -1,17 +1,25 @@
 # TryOnReady Retail Platform
 
-TryOnReady is a mobile-first retail technology scaffold for independent clothing boutiques. Its product direction is:
+TryOnReady is a mobile-first retail technology service for independent clothing boutiques. Its product direction is:
 
 > Virtual try-on for boutiques without the enterprise budget.
 
-This repository is an early hackathon foundation. It does not contain a live YouCam integration, production persistence, customer photographs, or production boutique data.
+This repository began as a hackathon scaffold and is now implementing the real
+server-side YouCam vertical slice. Consult the implementation log for the exact
+working-versus-pending boundary; do not infer completion from a page alone.
+
+The boutique retailer pays for TryOnReady and offers virtual try-on to shoppers
+at no charge as a courtesy and convenience. Subscription billing is outside the
+hackathon MVP; the operational dashboard tracks provider usage instead.
 
 ## First-phase capabilities
 
 - Public, responsive Next.js landing page and workflow routes
-- Working Product Readiness form backed by the local API; image bytes stay in the browser
-- Working in-memory Boutique Application submission and Admin Review decisions
-- Consumer Try-On consent, image preflight, and approved synthetic garment presentation
+- Persistent boutique application, catalog, approval, and try-on records
+- Server-validated private garment and consumer image uploads
+- Consumer consent, duplicate-request protection, and background processing
+- YouCam live adapter plus deterministic provider simulation for automated tests
+- Retailer results and API-unit dashboard
 - ASP.NET Core 10 API and worker foundations
 - Health check and OpenAPI document endpoints
 - Neutral server-side virtual try-on adapter contracts
@@ -30,6 +38,8 @@ src/TryOnReady.YouCam/            External VTO adapter boundary
 src/TryOnReady.Worker/            Background worker composition root
 tests/TryOnReady.UnitTests/       xUnit unit tests
 tests/TryOnReady.IntegrationTests/ ASP.NET Core integration tests
+samples/synthetic/                Authorized fictional demo images and metadata
+docs/judge/                       Judge-ready Word and PDF guide
 ```
 
 ## Prerequisites
@@ -64,13 +74,23 @@ With `TryOnReady.Api` running:
 - `http://localhost:5090/api` — API entry point and endpoint index
 - `http://localhost:5090/health` — health check
 - `http://localhost:5090/openapi/v1.json` — OpenAPI document
-- `http://localhost:5090/api/scaffold` — scaffold/integration status
+- `http://localhost:5090/api/status` — provider, persistence, and secret-boundary status
 - `http://localhost:5090/api/demo/catalog` — synthetic Luna & Thread catalog
-- `POST http://localhost:5090/api/readiness/assess` — metadata-only product readiness assessment
+- `POST http://localhost:5090/api/products` — private multipart garment submission
+- `POST http://localhost:5090/api/try-on-jobs` — private multipart consumer try-on submission
+- `GET http://localhost:5090/api/dashboard` — aggregate results and API-unit totals
 
-The live YouCam Apparel VTO request is intentionally disabled in this phase. Provider credentials must remain server-side and a reviewed follow-up task must implement upload, task creation, polling, and result retrieval.
+Repository defaults keep live YouCam mode disabled. A newly rotated credential
+has been verified in local Visual Studio User Secrets without printing its
+value; no controlled live task has been submitted yet. Simulation mode follows
+the same application workflow without spending an API unit. No provider
+credential is accepted from browser code.
 
-The Playwright smoke suite starts an isolated Release-mode API at `http://127.0.0.1:5091` and runs the landing-page and API workflows in desktop and mobile-sized Chrome contexts. It does not use the live YouCam API or consume API units.
+The Playwright smoke suite starts an isolated Release-mode API at
+`http://127.0.0.1:5091` and runs the complete retailer, administrator, and guest
+workflow in desktop Chrome plus a mobile Chrome smoke test. The same suite has
+also passed against the isolated local `tryonready-postgres` database. It does
+not use the live YouCam API or consume API units.
 
 ## Safety and scope
 
@@ -81,6 +101,16 @@ Read the following documents before contributing:
 - [Data and image safety](DATA-AND-IMAGE-SAFETY.md)
 - [Security policy](SECURITY.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Governing product brief](docs/GOVERNING-PRODUCT-BRIEF.md)
+- [YouCam account and secret setup](docs/YOUCAM-SETUP.md)
+- [PostgreSQL isolation](docs/POSTGRES-ISOLATION.md)
+- [Image storage and deletion policy](docs/DATA-RETENTION.md)
+- [Fly.io deployment runbook](docs/FLY-DEPLOYMENT.md)
+- [Implementation and verification log](docs/IMPLEMENTATION-LOG.md)
+- [Judge and manual testing guide](docs/JUDGE-TESTING-GUIDE.md)
+- [Judge guide in Word](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.docx)
+- [Judge guide in PDF](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.pdf)
+- [Synthetic asset metadata](samples/synthetic/ASSET-METADATA.md)
 - [Product scope](docs/PRODUCT-SCOPE.md)
 - [Demo script](docs/DEMO-SCRIPT.md)
 - [Small-business user guide](docs/SMALL-BUSINESS-USER-GUIDE.md)

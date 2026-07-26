@@ -42,7 +42,9 @@ export function BoutiqueApplicationForm() {
         throw new Error("Please check every required field and try again.");
       }
 
-      setResult((await response.json()) as ApplicationResult);
+      const submitted = (await response.json()) as ApplicationResult;
+      setResult(submitted);
+      window.sessionStorage.setItem("tryonready.applicationId", submitted.id);
     } catch (error) {
       setMessage(
         error instanceof Error
@@ -153,7 +155,7 @@ export function BoutiqueApplicationForm() {
               Status: <strong>{result.status}</strong>. Reference:{" "}
               <code>{result.id}</code>
             </p>
-            <Link className="inline-link" href="/product-readiness">
+            <Link className="inline-link" href="/product-readiness/">
               Continue to Product Readiness →
             </Link>
           </div>
@@ -169,8 +171,8 @@ export function BoutiqueApplicationForm() {
           <li>An administrator reviews the application and product.</li>
         </ol>
         <p>
-          This local demonstration keeps applications in memory. They reset
-          when the API restarts.
+          The application is saved in the isolated TryOnReady database so the
+          administrator can review it in the next step.
         </p>
       </aside>
     </section>

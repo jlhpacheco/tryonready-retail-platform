@@ -1,5 +1,10 @@
 # Scaffold Implementation and Verification
 
+> Historical record: this document describes the July 25 starting scaffold.
+> It is superseded by `GOVERNING-PRODUCT-BRIEF.md`,
+> `IMPLEMENTATION-LOG.md`, and `JUDGE-TESTING-GUIDE.md`. Do not use the
+> limitations below as the current application status.
+
 Date completed: July 25, 2026
 
 ## Outcome

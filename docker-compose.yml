@@ -1,0 +1,31 @@
+name: tryonready
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: tryonready-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tryonready
+      POSTGRES_USER: tryonready_app
+      POSTGRES_PASSWORD: local-development-only
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - tryonready-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tryonready_app -d tryonready"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - tryonready-network
+
+volumes:
+  tryonready-postgres-data:
+    name: tryonready-postgres-data
+
+networks:
+  tryonready-network:
+    name: tryonready-network
+

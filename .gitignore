@@ -33,3 +33,7 @@ Thumbs.db
 # Local tool artifacts
 playwright-report/
 test-results/
+.tryonready-data/
+tmp/
+__pycache__/
+*.pyc

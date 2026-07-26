@@ -14,6 +14,7 @@ type BoutiqueApplication = {
 
 type ProductReview = {
   id: string;
+  productId: string;
   boutiqueName: string;
   productName: string;
   sku: string;
@@ -23,9 +24,35 @@ type ProductReview = {
   providerStatus: string;
 };
 
+type ProductCatalogItem = {
+  id: string;
+  name: string;
+  brand: string;
+  color: string;
+  material: string;
+  sizeRange: string;
+  description: string;
+  price: number | null;
+  currency: string;
+  garmentImageUrl: string;
+};
+
+type Dashboard = {
+  totalJobs: number;
+  pendingJobs: number;
+  processingJobs: number;
+  succeededJobs: number;
+  failedJobs: number;
+  duplicateRequestsPrevented: number;
+  apiUnitsReserved: number;
+  apiUnitsConsumed: number;
+};
+
 export function AdminReviewWorkspace() {
   const [applications, setApplications] = useState<BoutiqueApplication[]>([]);
   const [reviews, setReviews] = useState<ProductReview[]>([]);
+  const [products, setProducts] = useState<ProductCatalogItem[]>([]);
+  const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,21 +64,41 @@ export function AdminReviewWorkspace() {
     void Promise.all([
       fetch("/api/boutique-applications"),
       fetch("/api/admin/reviews"),
+      fetch("/api/products"),
+      fetch("/api/dashboard"),
     ])
-      .then(async ([applicationsResponse, reviewsResponse]) => {
-        if (!applicationsResponse.ok || !reviewsResponse.ok) {
+      .then(
+        async ([
+          applicationsResponse,
+          reviewsResponse,
+          productsResponse,
+          dashboardResponse,
+        ]) => {
+        if (
+          !applicationsResponse.ok ||
+          !reviewsResponse.ok ||
+          !productsResponse.ok ||
+          !dashboardResponse.ok
+        ) {
           throw new Error("The review queues could not be loaded.");
         }
 
         const loadedApplications =
           (await applicationsResponse.json()) as BoutiqueApplication[];
         const loadedReviews = (await reviewsResponse.json()) as ProductReview[];
+        const loadedProducts =
+          (await productsResponse.json()) as ProductCatalogItem[];
+        const loadedDashboard =
+          (await dashboardResponse.json()) as Dashboard;
 
         if (isCurrent) {
           setApplications(loadedApplications);
           setReviews(loadedReviews);
+          setProducts(loadedProducts);
+          setDashboard(loadedDashboard);
         }
-      })
+      },
+      )
       .catch((error: unknown) => {
         if (isCurrent) {
           setMessage(
@@ -143,7 +190,7 @@ export function AdminReviewWorkspace() {
   return (
     <section className="admin-shell">
       <header className="admin-heading">
-        <p className="eyebrow">Admin review</p>
+        <p className="eyebrow">Step 3 · Admin review</p>
         <h1>Review the boutique and product before consumer try-on.</h1>
         <p>
           This workspace shows business details, readiness, and provider status.
@@ -157,6 +204,38 @@ export function AdminReviewWorkspace() {
           {message}
         </p>
       ) : null}
+
+      <section className="dashboard-panel" aria-labelledby="dashboard-title">
+        <div>
+          <p className="eyebrow">Retailer results dashboard</p>
+          <h2 id="dashboard-title">Usage without customer photographs.</h2>
+        </div>
+        <dl className="dashboard-grid">
+          <div>
+            <dt>Try-ons</dt>
+            <dd>{dashboard?.totalJobs ?? 0}</dd>
+          </div>
+          <div>
+            <dt>Completed</dt>
+            <dd>{dashboard?.succeededJobs ?? 0}</dd>
+          </div>
+          <div>
+            <dt>Processing</dt>
+            <dd>
+              {(dashboard?.pendingJobs ?? 0) +
+                (dashboard?.processingJobs ?? 0)}
+            </dd>
+          </div>
+          <div>
+            <dt>API units used</dt>
+            <dd>{dashboard?.apiUnitsConsumed ?? 0}</dd>
+          </div>
+          <div>
+            <dt>Duplicates stopped</dt>
+            <dd>{dashboard?.duplicateRequestsPrevented ?? 0}</dd>
+          </div>
+        </dl>
+      </section>
 
       <div className="admin-grid">
         <section className="admin-panel" aria-labelledby="applications-title">
@@ -224,6 +303,18 @@ export function AdminReviewWorkspace() {
 
           {reviews.map((review) => (
             <article className="review-card" key={review.id}>
+              {products.find((product) => product.id === review.productId) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="review-garment-image"
+                  src={
+                    products.find(
+                      (product) => product.id === review.productId,
+                    )!.garmentImageUrl
+                  }
+                  alt={`${review.productName} garment submitted for review`}
+                />
+              ) : null}
               <div className="review-card-heading">
                 <div>
                   <h3>{review.productName}</h3>
@@ -246,7 +337,49 @@ export function AdminReviewWorkspace() {
                   <dt>YouCam</dt>
                   <dd>{review.providerStatus}</dd>
                 </div>
+                {(() => {
+                  const product = products.find(
+                    (item) => item.id === review.productId,
+                  );
+                  return product ? (
+                    <>
+                      <div>
+                        <dt>Brand</dt>
+                        <dd>{product.brand}</dd>
+                      </div>
+                      <div>
+                        <dt>Color</dt>
+                        <dd>{product.color}</dd>
+                      </div>
+                      <div>
+                        <dt>Material</dt>
+                        <dd>{product.material}</dd>
+                      </div>
+                      <div>
+                        <dt>Sizes</dt>
+                        <dd>{product.sizeRange}</dd>
+                      </div>
+                      <div>
+                        <dt>Retail price</dt>
+                        <dd>
+                          {product.price === null
+                            ? "Not listed"
+                            : `${product.currency} ${product.price.toFixed(2)}`}
+                        </dd>
+                      </div>
+                    </>
+                  ) : null;
+                })()}
               </dl>
+              {products.find((product) => product.id === review.productId) ? (
+                <p className="review-description">
+                  {
+                    products.find(
+                      (product) => product.id === review.productId,
+                    )!.description
+                  }
+                </p>
+              ) : null}
               <label className="notes-field">
                 <span>Decision notes</span>
                 <textarea
@@ -280,6 +413,11 @@ export function AdminReviewWorkspace() {
                   Decline product
                 </button>
               </div>
+              {review.status === "Approved" ? (
+                <a className="inline-link next-step-link" href="/consumer-try-on/">
+                  Continue to Consumer Try-On →
+                </a>
+              ) : null}
             </article>
           ))}
         </section>

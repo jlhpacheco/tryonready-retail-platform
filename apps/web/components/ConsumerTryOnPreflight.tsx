@@ -1,6 +1,19 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+
+type Product = {
+  id: string;
+  boutiqueName: string;
+  name: string;
+  sku: string;
+  brand: string;
+  color: string;
+  sizeRange: string;
+  description: string;
+  garmentImageUrl: string;
+};
 
 type ImageDetails = {
   fileName: string;
@@ -10,15 +23,24 @@ type ImageDetails = {
   pixelHeight: number;
 };
 
-type PreflightResult = {
-  sessionId: string;
-  status: string;
+type TryOnJob = {
+  id: string;
+  productId: string;
   productName: string;
-  providerEnabled: boolean;
+  status: string;
   message: string;
+  isDuplicate: boolean;
+  duplicateRequestCount: number;
+  apiUnitsReserved: number;
+  apiUnitsConsumed: number;
+  resultUrl: string | null;
 };
 
-const productId = "bac012b4-fc08-4f74-a587-4b42fb791906";
+type WorkflowStatus = {
+  providerMode: string;
+  liveYouCamIntegration: boolean;
+  apiKeyExposedToBrowser: boolean;
+};
 
 async function readImage(file: File): Promise<ImageDetails> {
   const url = URL.createObjectURL(file);
@@ -49,12 +71,114 @@ async function readImage(file: File): Promise<ImageDetails> {
   }
 }
 
+function problemMessage(problem: {
+  errors?: Record<string, string[]>;
+}): string {
+  return (
+    Object.values(problem.errors ?? {})[0]?.[0] ??
+    "The secure try-on request could not be started."
+  );
+}
+
 export function ConsumerTryOnPreflight() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productId, setProductId] = useState("");
+  const [workflowStatus, setWorkflowStatus] =
+    useState<WorkflowStatus | null>(null);
   const [imageDetails, setImageDetails] = useState<ImageDetails | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [result, setResult] = useState<PreflightResult | null>(null);
+  const [job, setJob] = useState<TryOnJob | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
+
+  const selectedProduct = useMemo(
+    () => products.find((product) => product.id === productId) ?? null,
+    [productId, products],
+  );
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    void Promise.all([
+      fetch("/api/products?status=Approved"),
+      fetch("/api/status"),
+    ])
+      .then(async ([productsResponse, statusResponse]) => {
+        if (!productsResponse.ok || !statusResponse.ok) {
+          throw new Error("The approved garment catalog could not be loaded.");
+        }
+
+        const loadedProducts = (await productsResponse.json()) as Product[];
+        const loadedStatus = (await statusResponse.json()) as WorkflowStatus;
+        if (!isCurrent) {
+          return;
+        }
+
+        setProducts(loadedProducts);
+        setWorkflowStatus(loadedStatus);
+        const remembered =
+          window.sessionStorage.getItem("tryonready.productId") ?? "";
+        setProductId(
+          loadedProducts.some((product) => product.id === remembered)
+            ? remembered
+            : (loadedProducts[0]?.id ?? ""),
+        );
+      })
+      .catch((error: unknown) => {
+        if (isCurrent) {
+          setMessage(
+            error instanceof Error
+              ? error.message
+              : "The approved garment catalog could not be loaded.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isCurrent) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!job || !["Pending", "Submitting", "Processing"].includes(job.status)) {
+      return;
+    }
+
+    let isCurrent = true;
+    const timer = window.setInterval(() => {
+      void fetch(`/api/try-on-jobs/${job.id}`, { cache: "no-store" })
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error("The try-on status could not be refreshed.");
+          }
+
+          const updated = (await response.json()) as TryOnJob;
+          if (isCurrent) {
+            setJob(updated);
+          }
+        })
+        .catch((error: unknown) => {
+          if (isCurrent) {
+            setMessage(
+              error instanceof Error
+                ? error.message
+                : "The try-on status could not be refreshed.",
+            );
+          }
+        });
+    }, 750);
+
+    return () => {
+      isCurrent = false;
+      window.clearInterval(timer);
+    };
+  }, [job]);
 
   useEffect(
     () => () => {
@@ -67,7 +191,7 @@ export function ConsumerTryOnPreflight() {
 
   async function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    setResult(null);
+    setJob(null);
     setMessage(null);
     setImageDetails(null);
 
@@ -82,6 +206,12 @@ export function ConsumerTryOnPreflight() {
 
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       setMessage("Choose a JPEG, PNG, or WebP image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 10 * 1_024 * 1_024) {
+      setMessage("Choose an image no larger than 10 MB.");
       event.target.value = "";
       return;
     }
@@ -102,48 +232,46 @@ export function ConsumerTryOnPreflight() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setResult(null);
+    setJob(null);
     setMessage(null);
 
+    if (!productId) {
+      setMessage("An administrator must approve a garment first.");
+      return;
+    }
+
     if (!imageDetails) {
-      setMessage("Choose an authorized synthetic person image first.");
+      setMessage("Choose an authorized person image first.");
       return;
     }
 
     const form = new FormData(event.currentTarget);
+    form.set("productId", productId);
+    form.set("consentAccepted", "true");
     setIsBusy(true);
 
     try {
-      const response = await fetch("/api/consumer/try-on/preflight", {
+      const response = await fetch("/api/try-on-jobs", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productId,
-          ...imageDetails,
-          consentAccepted: form.get("consent") === "on",
-        }),
+        body: form,
       });
 
       if (!response.ok) {
-        const problem = (await response.json()) as {
-          errors?: Record<string, string[]>;
-          issues?: { message: string }[];
-        };
-        const firstError =
-          Object.values(problem.errors ?? {})[0]?.[0] ??
-          problem.issues?.[0]?.message;
         throw new Error(
-          firstError ??
-            "The try-on preflight could not be completed. Approve the product first.",
+          problemMessage(
+            (await response.json()) as {
+              errors?: Record<string, string[]>;
+            },
+          ),
         );
       }
 
-      setResult((await response.json()) as PreflightResult);
+      setJob((await response.json()) as TryOnJob);
     } catch (error) {
       setMessage(
         error instanceof Error
           ? error.message
-          : "The try-on preflight could not be completed.",
+          : "The secure try-on request could not be started.",
       );
     } finally {
       setIsBusy(false);
@@ -153,35 +281,81 @@ export function ConsumerTryOnPreflight() {
   return (
     <section className="consumer-shell">
       <div className="consumer-product">
-        <p className="eyebrow">Approved demo garment</p>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/demo/synthetic-terracotta-blazer.png"
-          alt="Synthetic terracotta tailored blazer"
-        />
-        <h1>Sunset Tailored Blazer</h1>
-        <p>Luna & Thread · SYN-BLZ-001</p>
+        <p className="eyebrow">Step 4 · Guest customer</p>
+        {selectedProduct ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={selectedProduct.garmentImageUrl}
+              alt={`${selectedProduct.name} approved garment`}
+            />
+            <h1>{selectedProduct.name}</h1>
+            <p>
+              {selectedProduct.boutiqueName} · {selectedProduct.sku}
+            </p>
+            <p>{selectedProduct.description}</p>
+          </>
+        ) : (
+          <div className="readiness-result readiness-needs-work">
+            <p className="result-label">Approval required</p>
+            <h2>No approved garment is available yet.</h2>
+            <Link className="inline-link" href="/admin-review/">
+              Go to Admin Review →
+            </Link>
+          </div>
+        )}
       </div>
 
       <form className="consumer-form" onSubmit={handleSubmit}>
         <div className="form-heading">
-          <p className="eyebrow">Consumer try-on</p>
-          <h2>Prepare your private try-on.</h2>
+          <p className="eyebrow">Free customer convenience</p>
+          <h2>See the approved garment on your photo.</h2>
           <p>
-            Choose an authorized synthetic person image. This demonstration
-            checks the image and consent before any provider request.
+            The boutique pays for this service. The guest customer does not
+            create an account or pay a fee.
           </p>
         </div>
+
+        <div className="provider-proof" role="status">
+          <span>Provider mode: {workflowStatus?.providerMode ?? "Loading"}</span>
+          <span>API key in browser: Never</span>
+        </div>
+
+        <label className="upload-field">
+          <span>Approved garment</span>
+          <select
+            name="productId"
+            value={productId}
+            onChange={(event) => {
+              setProductId(event.target.value);
+              window.sessionStorage.setItem(
+                "tryonready.productId",
+                event.target.value,
+              );
+            }}
+            required
+          >
+            <option value="" disabled>
+              Choose a garment
+            </option>
+            {products.map((product) => (
+              <option key={product.id} value={product.id}>
+                {product.name} · {product.color} · {product.sizeRange}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label className="upload-field">
           <span>Person image</span>
           <input
+            name="personImage"
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={handleImageChange}
             required
           />
-          <small>JPEG, PNG, or WebP. At least 1024 × 1024.</small>
+          <small>JPEG, PNG, or WebP. Maximum 10 MB.</small>
         </label>
 
         {previewUrl ? (
@@ -196,45 +370,69 @@ export function ConsumerTryOnPreflight() {
         ) : null}
 
         <div className="privacy-box">
-          <h3>Before you continue</h3>
+          <h3>Your photo stays private</h3>
           <ul>
-            <li>The boutique does not receive your photograph.</li>
+            <li>The boutique never receives your source or generated photo.</li>
             <li>No image content is written to application logs.</li>
-            <li>Virtual try-on does not guarantee fit or sizing.</li>
+            <li>Images follow the published automatic deletion schedule.</li>
+            <li>Virtual try-on does not guarantee physical fit or sizing.</li>
           </ul>
         </div>
 
         <label className="consent-field">
           <input name="consent" type="checkbox" required />
           <span>
-            I understand the image-handling notice and consent to this
-            preflight check.
+            I consent to processing this image to generate my virtual try-on
+            result.
           </span>
         </label>
 
         <button
           className="button button-primary form-action"
           type="submit"
-          disabled={isBusy}
+          disabled={isLoading || isBusy || products.length === 0}
         >
-          {isBusy ? "Checking…" : "Prepare try-on"}
+          {isBusy ? "Starting secure try-on…" : "Generate virtual try-on"}
         </button>
 
         {message ? (
           <div className="readiness-result readiness-error" role="alert">
-            <h3>Try-on is not ready</h3>
+            <h3>Try-on could not continue</h3>
             <p>{message}</p>
           </div>
         ) : null}
 
-        {result ? (
-          <div className="readiness-result readiness-ready" role="status">
-            <p className="result-label">Preflight passed</p>
-            <h3>{result.productName} is ready for secure submission.</h3>
-            <p>{result.message}</p>
-            <p>
-              Session: <code>{result.sessionId}</code>
-            </p>
+        {job ? (
+          <div
+            className={`readiness-result ${
+              job.status === "Failed" ? "readiness-error" : "readiness-ready"
+            }`}
+            role="status"
+            aria-live="polite"
+          >
+            <p className="result-label">Try-on status · {job.status}</p>
+            <h3>{job.message}</h3>
+            {job.isDuplicate ? (
+              <p>
+                Duplicate request prevented. No second provider task was
+                created.
+              </p>
+            ) : null}
+            {job.status === "Succeeded" && job.resultUrl ? (
+              <div className="generated-result">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${job.resultUrl}?v=${encodeURIComponent(job.id)}`}
+                  alt={`Generated virtual try-on result for ${job.productName}`}
+                />
+                <p>
+                  Result ready · API units used: {job.apiUnitsConsumed}
+                </p>
+                <Link className="inline-link" href="/admin-review/">
+                  View the retailer results dashboard →
+                </Link>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </form>

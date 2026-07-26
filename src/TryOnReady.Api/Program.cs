@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using TryOnReady.Api.Authentication;
 using TryOnReady.Api.Endpoints;
 using TryOnReady.Application.Readiness;
 using TryOnReady.Infrastructure;
@@ -8,14 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+builder.Services.AddTryOnReadyDemoAccess(builder.Configuration);
+builder.Services.ConfigureWorkflowUploads();
 builder.Services.AddSingleton<IProductReadinessService, ProductReadinessService>();
-builder.Services.AddTryOnReadyInfrastructure();
-builder.Services.AddYouCamScaffold(builder.Configuration);
+builder.Services.AddTryOnReadyInfrastructure(builder.Configuration);
+builder.Services.AddYouCam(builder.Configuration);
 
 var app = builder.Build();
 
+await app.Services.InitializeTryOnReadyDatabaseAsync();
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapOpenApi();
 app.MapHealthChecks(
@@ -25,6 +32,8 @@ app.MapHealthChecks(
         AllowCachingResponses = false,
     });
 app.MapScaffoldEndpoints();
+app.MapWorkflowEndpoints();
+app.MapTryOnReadyDemoAccess();
 app.MapFallback(async context =>
 {
     var requestedPath = context.Request.Path.Value?.Trim('/');

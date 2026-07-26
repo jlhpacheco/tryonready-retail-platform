@@ -1,4 +1,5 @@
 using TryOnReady.Api.Contracts;
+using TryOnReady.Api.Authentication;
 using TryOnReady.Application.AdminReview;
 using TryOnReady.Application.BoutiqueApplications;
 using TryOnReady.Application.Catalog;
@@ -17,11 +18,10 @@ internal static class ScaffoldEndpoints
                     new
                     {
                         name = "TryOnReady API",
-                        phase = "scaffold",
-                        liveYouCamIntegration = false,
+                        phase = "vertical-slice",
                         health = "/health",
                         openApi = "/openapi/v1.json",
-                        scaffoldStatus = "/api/scaffold",
+                        workflowStatus = "/api/status",
                         syntheticCatalog = "/api/demo/catalog",
                         readinessAssessment = "/api/readiness/assess",
                         adminReviews = "/api/admin/reviews",
@@ -37,8 +37,9 @@ internal static class ScaffoldEndpoints
                     new
                     {
                         name = "TryOnReady API",
-                        phase = "scaffold",
-                        liveYouCamIntegration = false,
+                        phase = "vertical-slice",
+                        supersededCompatibilityEndpoint = true,
+                        workflowStatus = "/api/status",
                     }))
             .WithName("GetScaffoldStatus")
             .WithTags("Scaffold");
@@ -86,7 +87,8 @@ internal static class ScaffoldEndpoints
                         await applicationService.GetApplicationsAsync(
                             cancellationToken)))
             .WithName("GetBoutiqueApplications")
-            .WithTags("Boutique Applications");
+            .WithTags("Boutique Applications")
+            .RequireAuthorization(DemoAccessPolicies.RetailerOrAdministrator);
 
         endpoints.MapPost(
                 "/api/boutique-applications",
@@ -113,7 +115,8 @@ internal static class ScaffoldEndpoints
                     return Results.Ok(application);
                 })
             .WithName("SubmitBoutiqueApplication")
-            .WithTags("Boutique Applications");
+            .WithTags("Boutique Applications")
+            .RequireAuthorization(DemoAccessPolicies.Retailer);
 
         endpoints.MapPost(
                 "/api/boutique-applications/{applicationId:guid}/decision",
@@ -146,7 +149,8 @@ internal static class ScaffoldEndpoints
                         : Results.Ok(application);
                 })
             .WithName("RecordBoutiqueApplicationDecision")
-            .WithTags("Boutique Applications");
+            .WithTags("Boutique Applications")
+            .RequireAuthorization(DemoAccessPolicies.Administrator);
 
         endpoints.MapGet(
                 "/api/admin/reviews",
@@ -156,7 +160,8 @@ internal static class ScaffoldEndpoints
                     TypedResults.Ok(
                         await reviewService.GetReviewsAsync(cancellationToken)))
             .WithName("GetAdminReviews")
-            .WithTags("Admin Review");
+            .WithTags("Admin Review")
+            .RequireAuthorization(DemoAccessPolicies.Administrator);
 
         endpoints.MapPost(
                 "/api/admin/reviews/{reviewId:guid}/decision",
@@ -204,7 +209,8 @@ internal static class ScaffoldEndpoints
                         : Results.Ok(review);
                 })
             .WithName("RecordAdminReviewDecision")
-            .WithTags("Admin Review");
+            .WithTags("Admin Review")
+            .RequireAuthorization(DemoAccessPolicies.Administrator);
 
         endpoints.MapPost(
                 "/api/consumer/try-on/preflight",

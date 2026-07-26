@@ -21,6 +21,7 @@ export const viewport: Viewport = {
 };
 
 const navigation = [
+  { href: "/sign-in", label: "Judge Sign In" },
   { href: "/boutique-application", label: "Boutique Application" },
   { href: "/product-readiness", label: "Product Readiness" },
   { href: "/admin-review", label: "Admin Review" },
@@ -66,8 +67,8 @@ export default function RootLayout({
             <p>Virtual try-on for boutiques without the enterprise budget.</p>
           </div>
           <p className="footer-note">
-            Private hackathon scaffold. No live YouCam requests or customer
-            photographs.
+            Retailer-paid virtual try-on offered free to guest customers. API
+            keys remain server-side.
           </p>
         </footer>
       </body>

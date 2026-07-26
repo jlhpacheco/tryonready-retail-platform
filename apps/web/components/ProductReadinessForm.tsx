@@ -1,6 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import Link from "next/link";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+
+type BoutiqueApplication = {
+  id: string;
+  boutiqueName: string;
+  status: string;
+};
 
 type ImageDetails = {
   fileName: string;
@@ -10,18 +17,14 @@ type ImageDetails = {
   pixelHeight: number;
 };
 
-type ReadinessIssue = {
-  code: string;
-  message: string;
-  severity: number;
+type ProductResult = {
+  id: string;
+  name: string;
+  sku: string;
+  status: string;
+  readinessPassed: boolean;
 };
 
-type ReadinessResult = {
-  isReady: boolean;
-  issues: ReadinessIssue[];
-};
-
-const demoProductId = "bac012b4-fc08-4f74-a587-4b42fb791906";
 const supportedMediaTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 async function readImageDetails(file: File): Promise<ImageDetails> {
@@ -38,7 +41,8 @@ async function readImageDetails(file: File): Promise<ImageDetails> {
           pixelWidth: image.naturalWidth,
           pixelHeight: image.naturalHeight,
         });
-      image.onerror = () => reject(new Error("The selected image could not be read."));
+      image.onerror = () =>
+        reject(new Error("The selected image could not be read."));
       image.src = imageUrl;
     });
 
@@ -65,12 +69,67 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1_024 * 1_024)).toFixed(1)} MB`;
 }
 
+function getProblemMessage(problem: {
+  errors?: Record<string, string[]>;
+}): string {
+  return (
+    Object.values(problem.errors ?? {})[0]?.[0] ??
+    "The garment could not be saved. Check the required fields and image."
+  );
+}
+
 export function ProductReadinessForm() {
+  const [applications, setApplications] = useState<BoutiqueApplication[]>([]);
+  const [applicationId, setApplicationId] = useState("");
   const [imageDetails, setImageDetails] = useState<ImageDetails | null>(null);
-  const [result, setResult] = useState<ReadinessResult | null>(null);
+  const [result, setResult] = useState<ProductResult | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isReading, setIsReading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    void fetch("/api/boutique-applications")
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Boutique applications could not be loaded.");
+        }
+
+        const loaded = (await response.json()) as BoutiqueApplication[];
+        if (!isCurrent) {
+          return;
+        }
+
+        setApplications(loaded);
+        const remembered =
+          window.sessionStorage.getItem("tryonready.applicationId") ?? "";
+        setApplicationId(
+          loaded.some((item) => item.id === remembered)
+            ? remembered
+            : (loaded[0]?.id ?? ""),
+        );
+      })
+      .catch((error: unknown) => {
+        if (isCurrent) {
+          setMessage(
+            error instanceof Error
+              ? error.message
+              : "Boutique applications could not be loaded.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isCurrent) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -88,8 +147,13 @@ export function ProductReadinessForm() {
       return;
     }
 
-    setIsReading(true);
+    if (file.size > 10 * 1_024 * 1_024) {
+      setMessage("Choose a garment image no larger than 10 MB.");
+      event.target.value = "";
+      return;
+    }
 
+    setIsReading(true);
     try {
       setImageDetails(await readImageDetails(file));
     } catch (error) {
@@ -109,35 +173,44 @@ export function ProductReadinessForm() {
     setResult(null);
     setMessage(null);
 
-    if (!imageDetails) {
-      setMessage("Choose a garment image before checking readiness.");
+    if (!applicationId) {
+      setMessage("Submit a boutique application before adding a garment.");
       return;
     }
 
+    if (!imageDetails) {
+      setMessage("Choose a garment image before saving the product.");
+      return;
+    }
+
+    const form = new FormData(event.currentTarget);
+    form.set("boutiqueApplicationId", applicationId);
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/readiness/assess", {
+      const response = await fetch("/api/products", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId: demoProductId,
-          ...imageDetails,
-        }),
+        body: form,
       });
 
       if (!response.ok) {
-        throw new Error("The readiness service could not check this image.");
+        throw new Error(
+          getProblemMessage(
+            (await response.json()) as {
+              errors?: Record<string, string[]>;
+            },
+          ),
+        );
       }
 
-      setResult((await response.json()) as ReadinessResult);
+      const saved = (await response.json()) as ProductResult;
+      setResult(saved);
+      window.sessionStorage.setItem("tryonready.productId", saved.id);
     } catch (error) {
       setMessage(
         error instanceof Error
           ? error.message
-          : "The readiness service could not check this image.",
+          : "The garment could not be saved.",
       );
     } finally {
       setIsSubmitting(false);
@@ -147,50 +220,129 @@ export function ProductReadinessForm() {
   return (
     <form className="readiness-form" onSubmit={handleSubmit}>
       <div className="form-heading">
-        <p className="eyebrow">Working readiness check</p>
-        <h1>Check a garment image before using a paid API unit.</h1>
+        <p className="eyebrow">Step 2 · Add a garment</p>
+        <h1>Save the product and check its image.</h1>
         <p>
-          Enter the garment details and choose an image. TryOnReady reads the
-          file metadata in your browser and sends only the file name, type,
-          size, and dimensions to the local API.
+          The secure server validates and stores the garment image before an
+          administrator reviews it. This prevents wasting a YouCam API unit on
+          an unusable file.
         </p>
       </div>
 
+      {isLoading ? <p role="status">Loading boutique applications…</p> : null}
+
+      {applications.length === 0 && !isLoading ? (
+        <div className="readiness-result readiness-needs-work">
+          <p className="result-label">Step 1 is required</p>
+          <h2>Submit the boutique application first.</h2>
+          <Link className="inline-link" href="/boutique-application/">
+            Go to Boutique Application →
+          </Link>
+        </div>
+      ) : null}
+
       <div className="form-grid">
         <label>
-          <span>Garment name</span>
-          <input
-            name="productName"
-            type="text"
-            placeholder="Example: Moonlight Blazer"
+          <span>Boutique</span>
+          <select
+            name="boutiqueApplicationId"
+            value={applicationId}
+            onChange={(event) => {
+              setApplicationId(event.target.value);
+              window.sessionStorage.setItem(
+                "tryonready.applicationId",
+                event.target.value,
+              );
+            }}
             required
-          />
+          >
+            <option value="" disabled>
+              Choose the boutique
+            </option>
+            {applications.map((application) => (
+              <option key={application.id} value={application.id}>
+                {application.boutiqueName} · {application.status}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          <span>Garment name</span>
+          <input name="name" defaultValue="Moonlight Blazer" required />
         </label>
 
         <label>
           <span>Product number</span>
-          <input
-            name="sku"
-            type="text"
-            placeholder="Example: BLZ-001"
-            required
-          />
+          <input name="sku" defaultValue="SYN-BLZ-001" required />
         </label>
 
         <label>
-          <span>Garment category</span>
-          <select name="category" defaultValue="" required>
-            <option value="" disabled>
-              Choose a category
-            </option>
+          <span>Category</span>
+          <select name="category" defaultValue="top" required>
             <option value="top">Top</option>
             <option value="bottom">Bottom</option>
             <option value="full_body">Full-body outfit</option>
           </select>
         </label>
 
+        <label>
+          <span>Brand</span>
+          <input name="brand" defaultValue="Luna & Thread" required />
+        </label>
+
+        <label>
+          <span>Color</span>
+          <input name="color" defaultValue="Terracotta" required />
+        </label>
+
+        <label>
+          <span>Material</span>
+          <input name="material" defaultValue="Cotton blend" required />
+        </label>
+
+        <label>
+          <span>Size range</span>
+          <input name="sizeRange" defaultValue="XS–XL" required />
+        </label>
+
+        <label>
+          <span>Price (optional)</span>
+          <input
+            name="price"
+            type="number"
+            min="0"
+            step="0.01"
+            defaultValue="89.00"
+          />
+        </label>
+
+        <label>
+          <span>Currency</span>
+          <input name="currency" defaultValue="USD" maxLength={3} required />
+        </label>
+
+        <label className="wide-field">
+          <span>Product description</span>
+          <textarea
+            name="description"
+            defaultValue="A structured synthetic demo blazer for an independent boutique virtual try-on."
+            rows={3}
+            required
+          />
+        </label>
+
+        <label className="wide-field">
+          <span>Product page (optional)</span>
+          <input
+            name="productUrl"
+            type="url"
+            placeholder="https://shop.example/product"
+          />
+        </label>
+
         <label className="file-field">
-          <span>Garment image</span>
+          <span>Garment photograph</span>
           <input
             name="garmentImage"
             type="file"
@@ -198,15 +350,11 @@ export function ProductReadinessForm() {
             onChange={handleFileChange}
             required
           />
-          <small>JPEG, PNG, or WebP. Maximum 15 MB. At least 1024 × 1024.</small>
+          <small>JPEG, PNG, or WebP. Maximum 10 MB. At least 1024 × 1024.</small>
         </label>
       </div>
 
-      {isReading ? (
-        <p className="form-message" role="status">
-          Reading image details…
-        </p>
-      ) : null}
+      {isReading ? <p role="status">Reading image details…</p> : null}
 
       {imageDetails ? (
         <dl className="image-details" aria-label="Selected image details">
@@ -234,51 +382,39 @@ export function ProductReadinessForm() {
       <button
         className="button button-primary readiness-submit"
         type="submit"
-        disabled={isReading || isSubmitting}
+        disabled={
+          isLoading ||
+          isReading ||
+          isSubmitting ||
+          applications.length === 0
+        }
       >
-        {isSubmitting ? "Checking…" : "Check image readiness"}
+        {isSubmitting ? "Saving and checking…" : "Save garment and check image"}
       </button>
 
       <p className="privacy-note">
-        Privacy note: this readiness check does not upload or store the
-        photograph.
+        The garment is stored privately. It becomes available to consumers only
+        after administrator approval.
       </p>
 
       {message ? (
         <div className="readiness-result readiness-error" role="alert">
-          <h2>We could not complete the check.</h2>
+          <h2>Garment not saved</h2>
           <p>{message}</p>
         </div>
       ) : null}
 
       {result ? (
-        <div
-          className={`readiness-result ${
-            result.isReady ? "readiness-ready" : "readiness-needs-work"
-          }`}
-          role="status"
-          aria-live="polite"
-        >
-          <p className="result-label">
-            {result.isReady ? "Ready for the next step" : "Needs a better image"}
+        <div className="readiness-result readiness-ready" role="status">
+          <p className="result-label">Image ready · Product saved</p>
+          <h2>{result.name} is waiting for administrator approval.</h2>
+          <p>
+            Product <strong>{result.sku}</strong> passed the server-side image
+            check. Status: <strong>{result.status}</strong>.
           </p>
-          <h2>
-            {result.isReady
-              ? "This image passes the scaffold readiness checks."
-              : "Fix these items and check the image again."}
-          </h2>
-          {result.issues.length > 0 ? (
-            <ul>
-              {result.issues.map((issue) => (
-                <li key={issue.code}>{issue.message}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>
-              Live YouCam validation is the next reviewed phase and is not
-              called by this check.
-            </p>
-          )}
+          <Link className="inline-link" href="/admin-review/">
+            Continue to Admin Review →
+          </Link>
         </div>
       ) : null}
     </form>

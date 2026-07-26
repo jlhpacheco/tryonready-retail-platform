@@ -1,14 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace TryOnReady.IntegrationTests;
 
-public sealed class ApiScaffoldTests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class ApiScaffoldTests : IClassFixture<TryOnReadyApiFactory>
 {
     private readonly HttpClient client;
 
-    public ApiScaffoldTests(WebApplicationFactory<Program> factory)
+    public ApiScaffoldTests(TryOnReadyApiFactory factory)
     {
         client = factory.CreateClient();
     }
@@ -41,18 +40,19 @@ public sealed class ApiScaffoldTests : IClassFixture<WebApplicationFactory<Progr
         var body = await response.Content.ReadAsStringAsync(CancellationToken.None);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("Check a garment image", body, StringComparison.Ordinal);
+        Assert.Contains("Save the product", body, StringComparison.Ordinal);
         Assert.Contains("Garment name", body, StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task ApiEntryPoint_ListsAvailableScaffoldEndpoints()
+    public async Task ApiEntryPoint_ListsAvailableVerticalSliceEndpoints()
     {
         using var response = await client.GetAsync("/api", CancellationToken.None);
         var body = await response.Content.ReadAsStringAsync(CancellationToken.None);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("\"liveYouCamIntegration\":false", body, StringComparison.Ordinal);
+        Assert.Contains("\"phase\":\"vertical-slice\"", body, StringComparison.Ordinal);
+        Assert.Contains("/api/status", body, StringComparison.Ordinal);
         Assert.Contains("/openapi/v1.json", body, StringComparison.Ordinal);
         Assert.Contains("/api/readiness/assess", body, StringComparison.Ordinal);
     }

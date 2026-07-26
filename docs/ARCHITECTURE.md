@@ -1,50 +1,79 @@
 # Architecture
 
-TryOnReady uses a small layered .NET backend and a separate Next.js frontend.
+TryOnReady uses one ASP.NET Core 10 host for the exported TypeScript frontend,
+HTTP API, background task processor, and private image delivery.
 
 ```text
-Next.js web application
+Next.js / TypeScript browser
         |
-ASP.NET Core API
+ASP.NET Core API and cookie authorization
         |
 Application workflows and ports
    /                    \
 Domain              Infrastructure
                          |
-                 YouCam adapter boundary
+            EF Core 10 + PostgreSQL
                          |
-                  Background worker
+               Private file storage
+                         |
+            YouCam adapter or simulation
 ```
 
 ## Backend responsibilities
 
-- `TryOnReady.Domain`: lean entities, enums, and value-oriented result records with no infrastructure dependencies.
-- `TryOnReady.Application`: use-case services and provider/repository ports. Business logic lives here rather than in API endpoints.
-- `TryOnReady.Infrastructure`: dependency registration and synthetic scaffold repositories. PostgreSQL/EF Core is deferred.
-- `TryOnReady.YouCam`: provider-facing contracts, safe options binding, and a disabled scaffold adapter. No live HTTP calls are present.
-- `TryOnReady.Api`: HTTP composition root, health checks, OpenAPI, and boundary validation.
-- `TryOnReady.Worker`: background processing composition root. It currently proves hosting and dependency wiring only.
+- `TryOnReady.Domain`: lean entities and workflow state.
+- `TryOnReady.Application`: catalog, try-on, storage, and provider ports.
+- `TryOnReady.Infrastructure`: EF Core repositories, private file storage,
+  duplicate protection, background processing, cleanup, and dashboard queries.
+- `TryOnReady.YouCam`: AI Clothes v3 file reservation, signed upload, task
+  creation, polling, result retrieval, simulation, and disabled modes.
+- `TryOnReady.Api`: authentication, authorization, multipart boundaries, image
+  validation, health checks, OpenAPI, and static frontend hosting.
+- `TryOnReady.Worker`: the same processing services available as a separate
+  composition root if deployment later separates background work.
 
-Dependencies point inward toward the domain. The API and worker compose implementations at startup.
+Dependencies point inward toward the domain. The API and worker compose
+implementations at startup.
 
-## Frontend responsibilities
+## Browser and authorization boundary
 
-`apps/web` contains a strict TypeScript, App Router-based Next.js application with semantic responsive navigation, a landing page, placeholder workflow routes, and a PWA manifest baseline. It contains no provider credentials or real photographs.
+The browser contains no provider credential. Retailer and administrator actions
+use an HTTP-only, SameSite cookie and distinct role policies. Guest catalog,
+consent, submission, polling, and result routes are public for the lean MVP.
+Unapproved garment images return not found to unauthenticated requests.
 
-For a reliable one-click Visual Studio workflow, the Next.js application uses static export. Building `TryOnReady.Api` runs the frontend production build and copies the generated, ignored output into the API's `wwwroot`. In local Visual Studio debugging, the API serves both the exported web shell and `/api`, `/health`, and `/openapi` endpoints from `http://localhost:5090`. Frontend hot reload remains available separately through `npm run dev`.
+The Next.js application is statically exported during the API build. ASP.NET
+serves the UI and API from one origin, which keeps cookies and deployment
+configuration simple.
 
-## Data
+## Persistence and storage
 
-The scaffold uses immutable synthetic fixtures in memory. PostgreSQL and Entity Framework Core are the approved future persistence direction but are intentionally not connected in this phase.
+EF Core 10 persists boutique applications, product catalog records, approval
+state, try-on jobs, duplicate counts, task references, and API-unit accounting.
+Local development uses only `tryonready-postgres` on host port `55432`.
 
-## External provider boundary
+Garment, consumer, and result images are stored outside `wwwroot`. The database
+stores opaque asset identifiers and metadata, not image bytes. Consumer inputs
+and generated results follow `DATA-RETENTION.md`.
 
-The application depends on a neutral `IApparelVirtualTryOnGateway`. Provider-specific configuration and implementation remain in `TryOnReady.YouCam`. The scaffold implementation reports that the capability is unavailable; it cannot make network requests.
+## Provider workflow
 
-The reviewed live implementation will follow the provider's asynchronous workflow: obtain upload targets/file identifiers, upload the source and reference assets, create an AI Clothes task, then poll or receive a webhook until success or failure. The current AI Clothes v3 documentation identifies `/s2s/v2.0/file/cloth-v3` and `/s2s/v2.0/task/cloth-v3` as the relevant provider endpoints. Those endpoint details must remain isolated inside `TryOnReady.YouCam`.
+`IApparelVirtualTryOnGateway` keeps provider details outside the application
+workflow. The live YouCam adapter:
 
-The provider currently documents per-IP and per-token rate limits and recommends graceful backoff for HTTP 429 responses. Retry, timeout, idempotency, polling cadence, and unit-consumption controls are design requirements for the later adapter, not features of this scaffold.
+1. reserves person and garment file identifiers;
+2. uploads both files to signed HTTPS targets;
+3. creates an AI Clothes v3 task;
+4. polls the provider task endpoint until success or failure; and
+5. retrieves the generated result through the secure server.
 
-## Future workflow
+A deterministic simulation implements the same interface for repeatable tests
+without spending API units. Request fingerprints return an existing job for an
+unchanged product/person pair, preventing duplicate provider tasks.
 
-Boutique application → garment details and upload → readiness assessment → provider validation → admin review → consumer try-on page → aggregated activity.
+## Deployment
+
+The `Dockerfile` builds the Next.js export and .NET host. `fly.toml` runs the
+single container on Fly.io. Production PostgreSQL, the YouCam key, role
+passwords, and connection strings are runtime secrets and never repository
+configuration.

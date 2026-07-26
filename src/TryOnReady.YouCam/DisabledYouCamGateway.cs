@@ -21,6 +21,28 @@ internal sealed class DisabledYouCamGateway(
             new VirtualTryOnSubmission(
                 VirtualTryOnSubmissionStatus.Disabled,
                 ProviderReference: null,
-                "Live YouCam requests are not implemented in the scaffold."));
+                "Live YouCam processing is disabled.",
+                ConsumesApiUnits: false));
+    }
+
+    public Task<VirtualTryOnProgress> GetProgressAsync(
+        string providerReference,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(
+            new VirtualTryOnProgress(
+                VirtualTryOnProgressStatus.Failed,
+                "Live YouCam processing is disabled.",
+                "provider_disabled",
+                Result: null));
+    }
+
+    public Task DeleteResourcesAsync(
+        string providerReference,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.CompletedTask;
     }
 }

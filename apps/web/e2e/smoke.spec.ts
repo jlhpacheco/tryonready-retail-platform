@@ -1,163 +1,208 @@
 import { expect, test } from "@playwright/test";
-import { join } from "node:path";
+import { resolve } from "node:path";
 
-test.describe("TryOnReady scaffold smoke", () => {
-  test("renders the landing page and navigates to product readiness", async ({
-    page,
-  }) => {
-    await page.goto("/");
+const retailer = {
+  username: "retailer@tryonready.demo",
+  password: "PlaywrightRetailer!2026",
+};
 
-    await expect(
-      page.getByRole("heading", {
-        name: /Virtual try-on, without the enterprise budget/i,
-      }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Luna & Thread", { exact: true }),
-    ).toBeVisible();
+const administrator = {
+  username: "admin@tryonready.demo",
+  password: "PlaywrightAdmin!2026",
+};
 
-    await page
-      .getByRole("navigation", { name: "Primary navigation" })
-      .getByRole("link", { name: "Product Readiness" })
-      .click();
+const expectedPersistence =
+  process.env.PLAYWRIGHT_EXPECTED_PERSISTENCE ?? "InMemory";
 
-    await expect(page).toHaveURL(/\/product-readiness\/?$/);
-    await expect(
-      page.getByRole("heading", {
-        name: "Check a garment image before using a paid API unit.",
-      }),
-    ).toBeVisible();
-  });
+const blazer = resolve(
+  process.cwd(),
+  "..",
+  "..",
+  "samples",
+  "synthetic",
+  "garments",
+  "moonlight-blazer.png",
+);
 
-  test("checks a selected garment image and explains readiness problems", async ({
-    page,
-  }) => {
-    await page.goto("/product-readiness/");
+const marisol = resolve(
+  process.cwd(),
+  "..",
+  "..",
+  "samples",
+  "synthetic",
+  "customers",
+  "marisol-lopez-source.png",
+);
 
-    await page.getByLabel("Garment name").fill("Synthetic Demo Blazer");
-    await page.getByLabel("Product number").fill("DEMO-BLZ-001");
-    await page.getByLabel("Garment category").selectOption("top");
-    await page.getByLabel("Garment image").setInputFiles({
-      name: "synthetic-demo.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z2ZkAAAAASUVORK5CYII=",
-        "base64",
-      ),
+async function signIn(
+  page: import("@playwright/test").Page,
+  account: "Retailer" | "Administrator",
+) {
+  const credentials = account === "Retailer" ? retailer : administrator;
+
+  await page.goto("/sign-in/");
+  await page
+    .getByRole("group", { name: "Demo role" })
+    .getByRole("button", { name: new RegExp(`^${account}\\b`) })
+    .click();
+  await page.getByLabel("Username").fill(credentials.username);
+  await page.getByLabel("Password").fill(credentials.password);
+  await page
+    .getByRole("button", { name: `Continue as ${account}` })
+    .click();
+}
+
+test.describe.serial("TryOnReady verified judge journey", () => {
+  test("smoke checks public health and protected access", async ({ request }) => {
+    const health = await request.get("/health");
+    expect(health.status()).toBe(200);
+    expect(await health.text()).toBe("Healthy");
+
+    const status = await request.get("/api/status");
+    expect(status.status()).toBe(200);
+    expect(await status.json()).toMatchObject({
+      providerMode: "Simulation",
+      liveYouCamIntegration: false,
+      apiKeyExposedToBrowser: false,
+      persistence: expectedPersistence,
     });
 
-    await expect(
-      page.getByRole("definition").filter({ hasText: "1 × 1" }),
-    ).toBeVisible();
-    await page
-      .getByRole("button", { name: "Check image readiness" })
-      .click();
+    const identity = await request.get("/api/auth/me");
+    expect(identity.status()).toBe(200);
+    expect(await identity.json()).toMatchObject({
+      isAuthenticated: false,
+    });
 
-    await expect(page.getByText("Needs a better image")).toBeVisible();
-    await expect(
-      page.getByText(
-        "Use an image at least 1024 pixels wide and 1024 pixels tall.",
-      ),
-    ).toBeVisible();
+    const protectedQueue = await request.get("/api/boutique-applications");
+    expect(protectedQueue.status()).toBe(401);
   });
 
-  test("serves API health, index, catalog, and readiness responses", async ({
+  test("completes retailer, administrator, and guest try-on flow", async ({
+    page,
     request,
   }) => {
-    const healthResponse = await request.get("/health");
-    expect(healthResponse.status()).toBe(200);
-    expect(await healthResponse.text()).toBe("Healthy");
+    const runId = Date.now().toString().slice(-8);
+    const businessEmail = `elena+${runId}@luna-thread.example.invalid`;
+    const sku = `SYN-BLZ-${runId}`;
 
-    const apiResponse = await request.get("/api");
-    expect(apiResponse.status()).toBe(200);
-    expect(await apiResponse.json()).toMatchObject({
-      name: "TryOnReady API",
-      phase: "scaffold",
-      liveYouCamIntegration: false,
-      openApi: "/openapi/v1.json",
+    const baselineLogin = await request.post("/api/auth/login", {
+      data: administrator,
     });
+    expect(baselineLogin.status()).toBe(200);
+    const baselineResponse = await request.get("/api/dashboard");
+    expect(baselineResponse.status()).toBe(200);
+    const baseline = (await baselineResponse.json()) as {
+      totalJobs: number;
+      succeededJobs: number;
+      duplicateRequestsPrevented: number;
+    };
 
-    const catalogResponse = await request.get("/api/demo/catalog");
-    expect(catalogResponse.status()).toBe(200);
-    expect(await catalogResponse.json()).toMatchObject({
-      boutique: {
-        displayName: "Luna & Thread",
-        ownerDisplayName: "Elena Rivera",
-      },
-    });
+    await signIn(page, "Retailer");
+    await expect(page).toHaveURL(/\/boutique-application\/?$/);
 
-    const readinessResponse = await request.post("/api/readiness/assess", {
-      data: {
-        productId: "bac012b4-fc08-4f74-a587-4b42fb791906",
-        fileName: "synthetic-blazer.jpg",
-        mediaType: "image/jpeg",
-        byteLength: 2_000_000,
-        pixelWidth: 1_600,
-        pixelHeight: 1_600,
-      },
-    });
-    expect(readinessResponse.status()).toBe(200);
-    expect(await readinessResponse.json()).toMatchObject({
-      isReady: true,
-      issues: [],
-    });
-  });
-
-  test("completes boutique submission, admin approval, and consumer preflight", async ({
-    page,
-  }) => {
-    await page.goto("/boutique-application/");
-
-    await expect(
-      page.getByRole("heading", {
-        name: "Tell us about your independent shop.",
-      }),
-    ).toBeVisible();
+    await page.getByLabel("Business email").fill(businessEmail);
     await page
       .getByLabel(/I confirm that this boutique will use only photographs/i)
       .check();
     await page.getByRole("button", { name: "Submit application" }).click();
     await expect(page.getByText("Application submitted")).toBeVisible();
+    await page
+      .getByRole("link", { name: /Continue to Product Readiness/i })
+      .click();
 
-    await page.goto("/admin-review/");
     await expect(
       page.getByRole("heading", {
-        name: "Review the boutique and product before consumer try-on.",
+        name: "Save the product and check its image.",
       }),
     ).toBeVisible();
+    await page.getByLabel("Product number").fill(sku);
+    await page.getByLabel("Garment photograph").setInputFiles(blazer);
+    await expect(page.getByText("1254 × 1254")).toBeVisible();
     await page
+      .getByRole("button", { name: "Save garment and check image" })
+      .click();
+    await expect(
+      page.getByText(
+        "Moonlight Blazer is waiting for administrator approval.",
+      ),
+    ).toBeVisible();
+
+    await signIn(page, "Administrator");
+    await expect(page).toHaveURL(/\/admin-review\/?$/);
+    const applicationCard = page
+      .getByRole("region", { name: "Boutique applications" })
+      .locator("article")
+      .filter({ hasText: businessEmail });
+    await expect(applicationCard).toBeVisible();
+    await applicationCard
       .getByRole("button", { name: "Approve boutique" })
-      .first()
       .click();
     await expect(
       page.getByText("Boutique application saved: Approved."),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Approve product" }).click();
+
+    const productCard = page
+      .getByRole("region", { name: "Product reviews" })
+      .locator("article")
+      .filter({ hasText: sku });
+    await expect(productCard).toBeVisible();
+    await productCard.getByRole("button", { name: "Approve product" }).click();
     await expect(
       page.getByText("Product review saved: Approved."),
     ).toBeVisible();
+    await productCard
+      .getByRole("link", { name: /Continue to Consumer Try-On/i })
+      .click();
 
-    await page.goto("/consumer-try-on/");
     await expect(
-      page.getByRole("heading", { name: "Prepare your private try-on." }),
+      page.getByRole("heading", { name: "Moonlight Blazer" }),
     ).toBeVisible();
-    await page.getByLabel("Person image").setInputFiles(
-      join(
-        process.cwd(),
-        "public",
-        "demo",
-        "synthetic-terracotta-blazer.png",
-      ),
-    );
+    await expect(page.getByText("Provider mode: Simulation")).toBeVisible();
+    await expect(page.getByText("API key in browser: Never")).toBeVisible();
+    await page.getByLabel("Person image").setInputFiles(marisol);
+    await expect(page.getByText(/864 × 1821/)).toBeVisible();
     await page
-      .getByLabel(/I understand the image-handling notice/i)
+      .getByLabel(/I consent to processing this image/i)
       .check();
-    await page.getByRole("button", { name: "Prepare try-on" }).click();
+    await page
+      .getByRole("button", { name: "Generate virtual try-on" })
+      .click();
+
+    await expect(page.getByText("Try-on status · Succeeded")).toBeVisible({
+      timeout: 30_000,
+    });
     await expect(
-      page.getByText("Preflight passed", { exact: true }),
+      page.getByRole("img", {
+        name: "Generated virtual try-on result for Moonlight Blazer",
+      }),
     ).toBeVisible();
-    await expect(
-      page.getByText("Live YouCam generation is not enabled yet."),
-    ).toBeVisible();
+    await expect(page.getByText("Result ready · API units used: 0")).toBeVisible();
+
+    await page
+      .getByRole("button", { name: "Generate virtual try-on" })
+      .click();
+    await expect(page.getByText("Duplicate request prevented.")).toBeVisible({
+      timeout: 15_000,
+    });
+
+    await page
+      .getByRole("link", { name: /View the retailer results dashboard/i })
+      .click();
+    await expect(page).toHaveURL(/\/admin-review\/?$/);
+    await expect(page.getByText("Usage without customer photographs.")).toBeVisible();
+    const metric = (label: string) =>
+      page.locator(".dashboard-grid > div").filter({
+        has: page.locator("dt", { hasText: label }),
+      });
+    await expect(metric("Try-ons").locator("dd")).toHaveText(
+      String(baseline.totalJobs + 1),
+    );
+    await expect(metric("Completed").locator("dd")).toHaveText(
+      String(baseline.succeededJobs + 1),
+    );
+    await expect(metric("API units used").locator("dd")).toHaveText("0");
+    await expect(metric("Duplicates stopped").locator("dd")).toHaveText(
+      String(baseline.duplicateRequestsPrevented + 1),
+    );
   });
 });
