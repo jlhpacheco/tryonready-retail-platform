@@ -1,0 +1,13 @@
+[
+  {
+    "id": "boutique-demo-001",
+    "name": "Luna & Thread",
+    "ownerName": "Elena Rivera",
+    "isSynthetic": true,
+    "location": "Campbell, California",
+    "businessType": "Independent women's clothing boutique",
+    "employeeCount": 3,
+    "salesChannels": ["Physical store", "Online shop", "Social media"],
+    "applicationStatus": "Approved"
+  }
+]
