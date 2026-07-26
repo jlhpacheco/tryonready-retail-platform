@@ -1,0 +1,30 @@
+@TryOnReady.Api_HostAddress = http://localhost:5090
+
+GET {{TryOnReady.Api_HostAddress}}/health
+Accept: text/plain
+
+###
+
+GET {{TryOnReady.Api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+
+GET {{TryOnReady.Api_HostAddress}}/api/demo/catalog
+Accept: application/json
+
+###
+
+POST {{TryOnReady.Api_HostAddress}}/api/readiness/assess
+Content-Type: application/json
+
+{
+  "productId": "bac012b4-fc08-4f74-a587-4b42fb791906",
+  "fileName": "synthetic-blazer.jpg",
+  "mediaType": "image/jpeg",
+  "byteLength": 2000000,
+  "pixelWidth": 1600,
+  "pixelHeight": 1600
+}
+
+###

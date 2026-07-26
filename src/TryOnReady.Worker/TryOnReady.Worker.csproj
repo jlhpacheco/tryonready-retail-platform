@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-TryOnReady.Worker-607fade4-1a07-459e-b9c6-fe6ba0446d97</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TryOnReady.Application\TryOnReady.Application.csproj" />
+    <ProjectReference Include="..\TryOnReady.Infrastructure\TryOnReady.Infrastructure.csproj" />
+    <ProjectReference Include="..\TryOnReady.YouCam\TryOnReady.YouCam.csproj" />
+  </ItemGroup>
+</Project>
