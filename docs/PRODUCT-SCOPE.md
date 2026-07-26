@@ -16,7 +16,7 @@ TryOnReady helps small independent clothing boutiques explore virtual try-on wit
 
 ## First scaffold experience
 
-The public site explains the concept and links to four workflow pages. Product Readiness is functional: it reads an owner-selected garment image in the browser and sends only its technical metadata to the local readiness API. Boutique Application, Admin Review, and Consumer Try-On remain clearly labeled scaffold previews.
+The public site explains the concept and links to four working local-demo pages. Boutique Application submits an in-memory application, Product Readiness evaluates technical image metadata, Admin Review records boutique and product decisions, and Consumer Try-On validates consent and person-image metadata before the disabled provider boundary. Live YouCam generation and durable PostgreSQL persistence remain separate reviewed phases.
 
 ## Product claims boundary
 

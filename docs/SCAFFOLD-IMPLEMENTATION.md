@@ -17,7 +17,9 @@ The scaffold does not make YouCam requests, connect to PostgreSQL, accept upload
 - responsive public landing page
 - accessible skip link, semantic navigation, keyboard focus states, touch-sized actions, and reduced-motion support
 - working Product Readiness form with browser-side image inspection and API-backed guidance
-- placeholder routes for Boutique Application, Admin Review, and Consumer Try-On
+- working Boutique Application form with in-memory submission
+- working Admin Review queues and decision actions
+- Consumer Try-On consent and image-preflight workflow with live generation disabled
 - PWA manifest baseline
 - static export integrated into the Visual Studio API build so F5 opens the website
 - synthetic Luna & Thread content only

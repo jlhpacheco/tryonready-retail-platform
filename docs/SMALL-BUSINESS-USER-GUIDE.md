@@ -4,15 +4,16 @@ This guide explains the current TryOnReady image-readiness check and the planned
 
 ## What works today
 
-The current website has a working first step. You can:
+The current website has a working local demonstration. You can:
 
 1. Open the public TryOnReady home page.
 2. Read how the service is intended to help small boutiques.
-3. Open **Product Readiness**, enter garment details, and choose a JPEG, PNG, or WebP image.
-4. Check whether the image type, size, and dimensions meet the basic requirements.
-5. Read a clear result explaining what to fix.
-6. Open the Boutique Application, Admin Review, and Consumer Try-On preview pages.
-7. Review the privacy promise explaining what a boutique may and may not see.
+3. Submit the **Boutique Application** form.
+4. Open **Product Readiness**, enter garment details, and choose a JPEG, PNG, or WebP image.
+5. Check whether the image type, size, and dimensions meet the basic requirements.
+6. Use **Admin Review** to approve or decline the boutique and product.
+7. Use **Consumer Try-On** to choose a person image, review the privacy notice, give consent, and run the image preflight.
+8. Review the privacy promise explaining what a boutique may and may not see.
 
 The photograph stays in the browser during this check. TryOnReady sends only the file name, media type, file size, and image dimensions to the local API. The site does not yet save applications, upload photographs, call YouCam, approve products, or publish customer pages.
 

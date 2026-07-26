@@ -1,5 +1,12 @@
 # Third-Party Notices
 
+## Original synthetic garment test assets
+
+The three PNG files in `samples/garments` were generated specifically for the
+private TryOnReady hackathon project using OpenAI image generation on July 25,
+2026. They depict fictional, unbranded garments and contain no real people,
+customer data, or third-party logos.
+
 TryOnReady depends on third-party frameworks and packages distributed under their own licenses. Their inclusion does not grant an open-source license to TryOnReady.
 
 Primary scaffold dependencies include:

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { join } from "node:path";
 
 test.describe("TryOnReady scaffold smoke", () => {
   test("renders the landing page and navigates to product readiness", async ({
@@ -100,5 +101,63 @@ test.describe("TryOnReady scaffold smoke", () => {
       isReady: true,
       issues: [],
     });
+  });
+
+  test("completes boutique submission, admin approval, and consumer preflight", async ({
+    page,
+  }) => {
+    await page.goto("/boutique-application/");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Tell us about your independent shop.",
+      }),
+    ).toBeVisible();
+    await page
+      .getByLabel(/I confirm that this boutique will use only photographs/i)
+      .check();
+    await page.getByRole("button", { name: "Submit application" }).click();
+    await expect(page.getByText("Application submitted")).toBeVisible();
+
+    await page.goto("/admin-review/");
+    await expect(
+      page.getByRole("heading", {
+        name: "Review the boutique and product before consumer try-on.",
+      }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Approve boutique" })
+      .first()
+      .click();
+    await expect(
+      page.getByText("Boutique application saved: Approved."),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Approve product" }).click();
+    await expect(
+      page.getByText("Product review saved: Approved."),
+    ).toBeVisible();
+
+    await page.goto("/consumer-try-on/");
+    await expect(
+      page.getByRole("heading", { name: "Prepare your private try-on." }),
+    ).toBeVisible();
+    await page.getByLabel("Person image").setInputFiles(
+      join(
+        process.cwd(),
+        "public",
+        "demo",
+        "synthetic-terracotta-blazer.png",
+      ),
+    );
+    await page
+      .getByLabel(/I understand the image-handling notice/i)
+      .check();
+    await page.getByRole("button", { name: "Prepare try-on" }).click();
+    await expect(
+      page.getByText("Preflight passed", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Live YouCam generation is not enabled yet."),
+    ).toBeVisible();
   });
 });

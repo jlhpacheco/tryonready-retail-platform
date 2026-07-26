@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using TryOnReady.Application.AdminReview;
+using TryOnReady.Application.BoutiqueApplications;
 using TryOnReady.Application.Catalog;
 using TryOnReady.Infrastructure.Synthetic;
 
@@ -11,6 +13,10 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddSingleton<IDemoCatalog, SyntheticDemoCatalog>();
+        services.AddSingleton<IAdminReviewService, InMemoryAdminReviewService>();
+        services.AddSingleton<
+            IBoutiqueApplicationService,
+            InMemoryBoutiqueApplicationService>();
         return services;
     }
 }

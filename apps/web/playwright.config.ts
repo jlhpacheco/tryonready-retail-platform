@@ -15,10 +15,10 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "dotnet run --project ../../src/TryOnReady.Api/TryOnReady.Api.csproj --configuration Release --no-launch-profile --urls http://127.0.0.1:5091",
+      "dotnet run --project ../../src/TryOnReady.Api/TryOnReady.Api.csproj --configuration Release --no-build --no-launch-profile --urls http://127.0.0.1:5091",
     url: `${baseURL}/health`,
     reuseExistingServer: false,
-    timeout: 180_000,
+    timeout: 300_000,
   },
   projects: [
     {

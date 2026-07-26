@@ -10,6 +10,8 @@ This repository is an early hackathon foundation. It does not contain a live You
 
 - Public, responsive Next.js landing page and workflow routes
 - Working Product Readiness form backed by the local API; image bytes stay in the browser
+- Working in-memory Boutique Application submission and Admin Review decisions
+- Consumer Try-On consent, image preflight, and approved synthetic garment presentation
 - ASP.NET Core 10 API and worker foundations
 - Health check and OpenAPI document endpoints
 - Neutral server-side virtual try-on adapter contracts
