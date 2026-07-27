@@ -2,6 +2,12 @@
 
 All people, businesses, products, and identifiers in this script are fictional.
 
+For the final 1–3 minute submission script, shot list, live-proof gate, and
+claim-safe language, use [VIDEO-NARRATIVE.md](VIDEO-NARRATIVE.md). The market
+case and criterion-by-criterion proof are in
+[MARKET-VALIDATION.md](MARKET-VALIDATION.md) and
+[JUDGE-EVALUATION-MAP.md](JUDGE-EVALUATION-MAP.md).
+
 ## One continuous 1-3 minute walkthrough
 
 1. Open TryOnReady and state: “The retailer pays; the guest receives virtual

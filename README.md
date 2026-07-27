@@ -2,7 +2,13 @@
 
 TryOnReady is a mobile-first retail technology service for independent clothing boutiques. Its product direction is:
 
-> Virtual try-on for boutiques without the enterprise budget.
+> Virtual try-on that a small boutique can actually run.
+
+A boutique prepares and approves each garment once; guest shoppers try it
+privately without an account; valid provider requests and API units stay
+controlled; and the retailer sees aggregate interest without customer photos.
+Conversion and return improvements are pilot hypotheses, not established
+outcomes.
 
 This repository began as a hackathon scaffold and is now implementing the real
 server-side YouCam vertical slice. Consult the implementation log for the exact
@@ -107,6 +113,11 @@ Read the following documents before contributing:
 - [Image storage and deletion policy](docs/DATA-RETENTION.md)
 - [Fly.io deployment runbook](docs/FLY-DEPLOYMENT.md)
 - [Implementation and verification log](docs/IMPLEMENTATION-LOG.md)
+- [Market validation](docs/MARKET-VALIDATION.md)
+- [Value proposition and novelty](docs/VALUE-PROPOSITION-AND-NOVELTY.md)
+- [Judge evaluation map](docs/JUDGE-EVALUATION-MAP.md)
+- [Video narrative](docs/VIDEO-NARRATIVE.md)
+- [Pilot metrics](docs/PILOT-METRICS.md)
 - [Judge and manual testing guide](docs/JUDGE-TESTING-GUIDE.md)
 - [Judge guide in Word](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.docx)
 - [Judge guide in PDF](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.pdf)

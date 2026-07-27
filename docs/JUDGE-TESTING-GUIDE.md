@@ -1,5 +1,13 @@
 # TryOnReady Judge and Small-Business Guide
 
+## Judge narrative pack
+
+- [Market validation](MARKET-VALIDATION.md)
+- [Value proposition and novelty](VALUE-PROPOSITION-AND-NOVELTY.md)
+- [Judge evaluation map](JUDGE-EVALUATION-MAP.md)
+- [Final video narrative](VIDEO-NARRATIVE.md)
+- [Pilot metrics](PILOT-METRICS.md)
+
 ## The one-sentence story
 
 Elena Rivera submits her fictional boutique, Luna & Thread; adds an authorized
