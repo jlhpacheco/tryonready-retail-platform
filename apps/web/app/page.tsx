@@ -41,24 +41,24 @@ export default function Home() {
       <section className="hero">
         <div className="hero-copy">
           <p className="eyebrow">Built for independent boutiques</p>
-          <h1>Virtual try-on, without the enterprise budget.</h1>
+          <h1>Virtual try-on that a small boutique can actually run.</h1>
           <p className="hero-intro">
-            TryOnReady lets an independent boutique offer customers virtual
-            try-on as a free courtesy and convenience. The retailer pays for
-            the service and gains an enterprise-style experience without an
-            enterprise implementation.
+            Prepare and approve each garment once. Let shoppers try it
+            privately without an account. Control valid provider requests and
+            learn which garments attract interest—without seeing customer
+            photos.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" href="/boutique-application">
-              Explore the boutique flow
+              Start the Luna &amp; Thread demo
             </Link>
             <a className="button button-secondary" href="#workflow">
               See how it works
             </a>
           </div>
           <p className="scaffold-note">
-            Guided judge demo: application → garment → approval → guest
-            try-on → result.
+            Retailer-paid and guest-friendly: application → garment readiness
+            → approval → private try-on → aggregate results.
           </p>
         </div>
         <aside className="demo-card" aria-labelledby="demo-title">
@@ -88,23 +88,23 @@ export default function Home() {
 
       <section className="trust-strip" aria-label="Product principles">
         <p>
-          <strong>Mobile first</strong>
-          <span>Designed for the phone already in a boutique owner&apos;s hand.</span>
+          <strong>Ready before paid use</strong>
+          <span>Check the garment before a shopper request can use a provider unit.</span>
         </p>
         <p>
-          <strong>Privacy bounded</strong>
-          <span>Retailers never receive customer source or generated photos.</span>
+          <strong>Private, no-account guests</strong>
+          <span>Shoppers consent; retailers never receive their source or generated photos.</span>
         </p>
         <p>
-          <strong>Human reviewed</strong>
-          <span>Publishing remains a deliberate administrative decision.</span>
+          <strong>Controlled and measurable</strong>
+          <span>Stop unchanged duplicates and track completed work and API units.</span>
         </p>
       </section>
 
       <section className="workflow-section" id="workflow">
         <div className="section-heading">
           <p className="eyebrow">The guided workflow</p>
-          <h2>From phone photo to customer-ready preview.</h2>
+          <h2>One garment setup. One private guest journey.</h2>
           <p>
             Every screen explains the next action so a retailer, administrator,
             shopper, or judge can complete the journey without guessing.
@@ -133,10 +133,10 @@ export default function Home() {
           <article>
             <h3>Retailers may see</h3>
             <ul className="check-list">
+              <li>Approved garment catalog details</li>
               <li>Aggregated try-on counts</li>
               <li>Processing success and failure totals</li>
-              <li>Product-page visits and outbound clicks</li>
-              <li>API-unit consumption</li>
+              <li>API units and stopped duplicates</li>
             </ul>
           </article>
           <article className="never-card">
@@ -152,11 +152,12 @@ export default function Home() {
       </section>
 
       <section className="closing-section">
-        <p className="eyebrow">Small-shop technology, intentionally scoped</p>
-        <h2>One clear journey from garment setup to customer convenience.</h2>
+        <p className="eyebrow">A lean pilot, not an unproven promise</p>
+        <h2>Run one garment safely before scaling the catalog.</h2>
         <p>
-          The retailer manages the garment and provider usage. The shopper pays
-          nothing and receives a private, convenient virtual try-on result.
+          TryOnReady measures reliable results, retailer effort, controlled
+          units, garment-interest actions, and deletion compliance. Conversion
+          and return improvements remain hypotheses for a real boutique pilot.
         </p>
         <Link className="button button-light" href="/boutique-application/">
           Start the guided demo

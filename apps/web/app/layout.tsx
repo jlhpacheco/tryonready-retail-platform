@@ -64,7 +64,7 @@ export default function RootLayout({
             <Link className="brand footer-brand" href="/">
               TryOnReady
             </Link>
-            <p>Virtual try-on for boutiques without the enterprise budget.</p>
+            <p>Virtual try-on that a small boutique can actually run.</p>
           </div>
           <p className="footer-note">
             Retailer-paid virtual try-on offered free to guest customers. API

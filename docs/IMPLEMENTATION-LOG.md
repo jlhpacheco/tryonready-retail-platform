@@ -145,3 +145,34 @@ fictional-person notice, and permitted demo purpose in
 The simple-English judge journey was published as Markdown, Word, and PDF. The
 final ten-page PDF was rendered and every page was visually inspected for
 clipping, overflow, numbering, image placement, and readability.
+
+## July 26, 2026 — market and judge narrative strengthened
+
+Added:
+
+- source-backed U.S. small clothing-retailer proxy and pilot-market range
+- value proposition and operating-layer novelty statement
+- criterion-by-criterion Devpost judge evidence map
+- claim-safe 1–3 minute live-demo script and shot list
+- pilot definitions for activation, readiness, approval, try-on completion,
+  duplicate units avoided, consent/drop-off, garment interest, and deletion
+- landing-page copy led by “Virtual try-on that a small boutique can actually
+  run”
+
+Fresh verification after the copy and documentation changes:
+
+- Next.js production build: passed
+- .NET Release build: 0 warnings, 0 errors
+- .NET unit tests: 2 passed
+- .NET integration tests: 8 passed
+- ESLint: passed
+- TypeScript: passed
+- Playwright in-memory journey: 3 passed
+
+One parallel verification attempt created local simulation-resource
+interference and was not counted; the .NET and Playwright suites both passed
+when rerun independently.
+
+No YouCam task was submitted, no provider unit was consumed, and no database
+or Docker container was accessed during this documentation phase. A controlled
+live YouCam completion and the public Fly.io judge URL remain pending.
