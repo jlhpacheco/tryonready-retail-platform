@@ -362,10 +362,17 @@ export function ConsumerTryOnPreflight() {
           <div className="consumer-preview">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={previewUrl} alt="Selected private try-on preview" />
-            <p>
-              {imageDetails?.pixelWidth} × {imageDetails?.pixelHeight} ·{" "}
-              {imageDetails?.fileName}
-            </p>
+            <div>
+              <strong>Full private preview</strong>
+              <p>
+                {imageDetails?.pixelWidth} × {imageDetails?.pixelHeight} ·{" "}
+                {imageDetails?.fileName}
+              </p>
+              <small>
+                Confirm that the face, shoulders, and full outfit area are
+                visible before generating.
+              </small>
+            </div>
           </div>
         ) : null}
 

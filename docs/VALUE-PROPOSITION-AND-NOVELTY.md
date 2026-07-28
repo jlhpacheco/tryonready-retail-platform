@@ -106,6 +106,15 @@ Use this wording:
 **Primary action:** Start the Luna & Thread demo  
 **Secondary action:** See the five controls
 
+**Positioning line:** Others help one shopper choose a look. TryOnReady helps a
+small boutique operate virtual try-on safely for every guest.
+
+**Proof surface:** Lead with the Luna & Thread operations receipt: Moonlight
+Blazer readiness passed, administrator approval completed, no guest account,
+one completed live try-on, one API unit, and zero shopper photographs in the
+retailer view. This makes the operational difference visible before a judge
+reads the supporting copy.
+
 ### Five-control strip
 
 1. **Ready before paid use** — Check the garment image before a shopper request can consume a provider unit.
@@ -189,4 +198,3 @@ TryOnReady does not need to beat Google or Walmart as a shopping destination. It
 - API journey: `tests/TryOnReady.IntegrationTests/CompleteJourneyTests.cs`
 - Browser journey: `apps/web/e2e/smoke.spec.ts`
 - Working/pending ledger: `docs/IMPLEMENTATION-LOG.md`
-

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const workflow = [
@@ -48,6 +49,10 @@ export default function Home() {
             learn which garments attract interest—without seeing customer
             photos.
           </p>
+          <p className="hero-positioning">
+            Others help one shopper choose a look. TryOnReady helps a small
+            boutique operate virtual try-on safely for every guest.
+          </p>
           <div className="hero-actions">
             <Link className="button button-primary" href="/boutique-application">
               Start the Luna &amp; Thread demo
@@ -61,28 +66,69 @@ export default function Home() {
             → approval → private try-on → aggregate results.
           </p>
         </div>
-        <aside className="demo-card" aria-labelledby="demo-title">
-          <div className="demo-card-top">
-            <span className="status-dot" aria-hidden="true" />
-            <span>Fictional demo boutique</span>
-          </div>
-          <div className="garment-placeholder" aria-hidden="true">
-            <span>LT</span>
-          </div>
-          <div className="demo-card-body">
-            <p className="demo-label">Luna &amp; Thread</p>
-            <h2 id="demo-title">Meet Elena&apos;s new blazer workflow.</h2>
-            <p>
-              Elena Rivera runs a three-person boutique. TryOnReady guides her
-              from garment preparation to a reviewed customer experience.
-            </p>
-            <div className="progress-row" aria-label="Demo workflow">
-              <span className="progress-active">Prepare</span>
-              <span>Validate</span>
-              <span>Review</span>
-              <span>Publish</span>
+        <aside className="operations-receipt" aria-labelledby="operations-title">
+          <header className="operations-header">
+            <div>
+              <p>Boutique operations proof</p>
+              <span>One completed live demo path</span>
+            </div>
+            <span className="operations-live">YouCamLive</span>
+          </header>
+
+          <div className="operations-product">
+            <Image
+              alt="Terracotta Moonlight Blazer"
+              height={1254}
+              priority
+              src="/demo/synthetic-terracotta-blazer.png"
+              unoptimized
+              width={1254}
+            />
+            <div>
+              <p>Luna &amp; Thread</p>
+              <h2 id="operations-title">Moonlight Blazer</h2>
+              <span>SYN-BLZ-001 · Terracotta · XS–XL</span>
             </div>
           </div>
+
+          <dl className="operations-checks">
+            <div>
+              <dt>Image readiness</dt>
+              <dd className="check-passed">Passed</dd>
+            </div>
+            <div>
+              <dt>Administrator approval</dt>
+              <dd className="check-passed">Approved</dd>
+            </div>
+            <div>
+              <dt>Guest account required</dt>
+              <dd>No</dd>
+            </div>
+            <div>
+              <dt>Completed try-ons</dt>
+              <dd>1</dd>
+            </div>
+            <div>
+              <dt>API units used</dt>
+              <dd>1</dd>
+            </div>
+            <div>
+              <dt>Shopper photos in retailer view</dt>
+              <dd>0</dd>
+            </div>
+          </dl>
+
+          <div className="operations-flow" aria-label="TryOnReady operating path">
+            <span>Apply</span>
+            <span>Prepare</span>
+            <span>Approve</span>
+            <span>Private try-on</span>
+          </div>
+
+          <footer className="operations-footer">
+            <span>Server-side API key</span>
+            <strong>Retailer-safe aggregate signals</strong>
+          </footer>
         </aside>
       </section>
 

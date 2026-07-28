@@ -92,8 +92,14 @@ export function AdminReviewWorkspace() {
           (await dashboardResponse.json()) as Dashboard;
 
         if (isCurrent) {
-          setApplications(loadedApplications);
-          setReviews(loadedReviews);
+          setApplications(
+            loadedApplications.filter(
+              (application) => application.status === "Submitted",
+            ),
+          );
+          setReviews(
+            loadedReviews.filter((review) => review.status === "Pending"),
+          );
           setProducts(loadedProducts);
           setDashboard(loadedDashboard);
         }
@@ -242,12 +248,12 @@ export function AdminReviewWorkspace() {
           <div className="panel-heading">
             <p className="eyebrow">Queue 01</p>
             <h2 id="applications-title">Boutique applications</h2>
+            <p>Awaiting an administrator decision.</p>
           </div>
 
           {applications.length === 0 ? (
             <p className="empty-state">
-              No submitted applications yet. Submit the Boutique Application
-              form first.
+              No boutique applications are awaiting review.
             </p>
           ) : (
             applications.map((application) => (
@@ -299,9 +305,14 @@ export function AdminReviewWorkspace() {
           <div className="panel-heading">
             <p className="eyebrow">Queue 02</p>
             <h2 id="products-title">Product reviews</h2>
+            <p>Ready garments awaiting an administrator decision.</p>
           </div>
 
-          {reviews.map((review) => (
+          {reviews.length === 0 ? (
+            <p className="empty-state">
+              No products are awaiting review.
+            </p>
+          ) : reviews.map((review) => (
             <article className="review-card" key={review.id}>
               {products.find((product) => product.id === review.productId) ? (
                 // eslint-disable-next-line @next/next/no-img-element

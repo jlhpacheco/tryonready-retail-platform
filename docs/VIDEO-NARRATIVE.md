@@ -2,17 +2,20 @@
 
 ## Target Cut
 
-**Recommended length:** 2 minutes 20 seconds  
+**Rendered judge cut:** 2 minutes 32 seconds
 **Audience:** Hackathon judges seeing TryOnReady for the first time  
 **Single idea:** YouCam generates the apparel result; TryOnReady makes the experience operable, private, and cost-controlled for a small boutique.
 
-The final submission recording must use one controlled live YouCam result. Until that task succeeds, use the script only as a rehearsal and label any captured run “Provider simulation.” Do not imply that a simulated output is provider evidence.
+The rendered cut uses the controlled live YouCam result completed on July 28,
+2026. It visibly shows `YouCamLive`, `Succeeded`, the generated Marisol result,
+and `API units used: 1`. Do not describe a simulated output as provider evidence
+in any alternate cut.
 
 ## Tight Script and Shot List
 
 | Time | Screen and action | Voiceover | On-screen proof |
 |---:|---|---|---|
-| 0:00–0:10 | Open the landing page. Hold briefly on the hero and Luna & Thread card. | “Independent boutiques compete with enterprise digital shopping experiences, but a three-person shop does not have an enterprise integration team. TryOnReady is virtual try-on that a small boutique can actually run.” | Hero line; “Built for independent boutiques”; Luna & Thread |
+| 0:00–0:10 | Open on the operations-proof hero: Luna & Thread, Moonlight Blazer, readiness, approval, guest boundary, and controlled unit count. | “Independent boutiques compete with enterprise digital shopping experiences, but a three-person shop does not have an enterprise integration team. TryOnReady is virtual try-on that a small boutique can actually run.” | “Boutique operations proof”; `YouCamLive`; readiness passed; approval; one completed try-on; one API unit; zero shopper photos in retailer view |
 | 0:10–0:20 | Scroll or frame the workflow and privacy/value strip. | “The boutique prepares and approves a garment once. Guests try it privately without an account. Valid requests and provider units stay controlled, and the retailer gets useful totals—not customer photos.” | Four steps; privacy boundary; no-account value |
 | 0:20–0:33 | Submit the prepared Luna & Thread application for Elena Rivera. | “Elena Rivera owns fictional boutique Luna & Thread. She submits one guided application with image-rights confirmation.” | Three employees; physical store; rights checkbox; “Application submitted” |
 | 0:33–0:50 | Continue to Product Readiness, select Moonlight Blazer, and save. | “She adds the Moonlight Blazer. TryOnReady checks the file before it can become a paid try-on input, preventing unsuitable images from reaching the provider.” | `SYN-BLZ-001`; 1254 × 1254; readiness passed |
@@ -28,6 +31,9 @@ The final submission recording must use one controlled live YouCam result. Until
 ### Opening
 
 > “Independent boutiques compete with enterprise digital shopping experiences, but a three-person shop does not have an enterprise integration team. TryOnReady is virtual try-on that a small boutique can actually run.”
+
+**Opening visual distinction:** Others help one shopper choose a look.
+TryOnReady helps a small boutique operate the service safely for every guest.
 
 ### Close
 
@@ -132,4 +138,3 @@ Suggested compression:
 - [ ] Captions are accurate.
 - [ ] Public YouTube or Vimeo link works without sign-in.
 - [ ] Judge URL and repository instructions match the filmed version.
-
