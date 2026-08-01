@@ -125,7 +125,7 @@ test.describe.serial("TryOnReady verified judge journey", () => {
       page.getByText(
         "Moonlight Blazer is waiting for administrator approval.",
       ),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30_000 });
 
     await signIn(page, "Administrator");
     await expect(page).toHaveURL(/\/admin-review\/?$/);
@@ -157,8 +157,8 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     await expect(
       page.getByRole("heading", { name: "Moonlight Blazer" }),
     ).toBeVisible();
-    await expect(page.getByText("Provider mode: Simulation")).toBeVisible();
-    await expect(page.getByText("API key in browser: Never")).toBeVisible();
+    await expect(page.getByText("YouCam connection: Demo mode")).toBeVisible();
+    await expect(page.getByText("Secret keys: hidden from shoppers")).toBeVisible();
     await page.getByLabel("Person image").setInputFiles(marisol);
     await expect(page.getByText(/864 × 1821/)).toBeVisible();
     await page
@@ -176,12 +176,12 @@ test.describe.serial("TryOnReady verified judge journey", () => {
         name: "Generated virtual try-on result for Moonlight Blazer",
       }),
     ).toBeVisible();
-    await expect(page.getByText("Result ready · API units used: 0")).toBeVisible();
+    await expect(page.getByText("Result ready · Live try-ons used: 0")).toBeVisible();
 
     await page
       .getByRole("button", { name: "Generate virtual try-on" })
       .click();
-    await expect(page.getByText("Duplicate request prevented.")).toBeVisible({
+    await expect(page.getByText("Already generated.")).toBeVisible({
       timeout: 15_000,
     });
 
@@ -190,17 +190,21 @@ test.describe.serial("TryOnReady verified judge journey", () => {
       .click();
     await expect(page).toHaveURL(/\/admin-review\/?$/);
     await expect(page.getByText("Usage without customer photographs.")).toBeVisible();
-    const metric = (label: string) =>
-      page.locator(".dashboard-grid > div").filter({
-        has: page.locator("dt", { hasText: label }),
+    const metric = (label: string) => {
+      const exactLabel = new RegExp(
+        `^${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+      );
+      return page.locator(".dashboard-grid > div").filter({
+        has: page.locator("dt").filter({ hasText: exactLabel }),
       });
+    };
     await expect(metric("Try-ons").locator("dd")).toHaveText(
       String(baseline.totalJobs + 1),
     );
     await expect(metric("Completed").locator("dd")).toHaveText(
       String(baseline.succeededJobs + 1),
     );
-    await expect(metric("API units used").locator("dd")).toHaveText("0");
+    await expect(metric("Live try-ons used").locator("dd")).toHaveText("0");
     await expect(metric("Duplicates stopped").locator("dd")).toHaveText(
       String(baseline.duplicateRequestsPrevented + 1),
     );

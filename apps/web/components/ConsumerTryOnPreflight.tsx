@@ -76,8 +76,16 @@ function problemMessage(problem: {
 }): string {
   return (
     Object.values(problem.errors ?? {})[0]?.[0] ??
-    "The secure try-on request could not be started."
+    "The private try-on could not be started."
   );
+}
+
+function formatYouCamStatus(status: WorkflowStatus | null): string {
+  if (!status) {
+    return "Checking";
+  }
+
+  return status.liveYouCamIntegration ? "Live and ready" : "Demo mode";
 }
 
 export function ConsumerTryOnPreflight() {
@@ -271,7 +279,7 @@ export function ConsumerTryOnPreflight() {
       setMessage(
         error instanceof Error
           ? error.message
-          : "The secure try-on request could not be started.",
+          : "The private try-on could not be started.",
       );
     } finally {
       setIsBusy(false);
@@ -317,8 +325,8 @@ export function ConsumerTryOnPreflight() {
         </div>
 
         <div className="provider-proof" role="status">
-          <span>Provider mode: {workflowStatus?.providerMode ?? "Loading"}</span>
-          <span>API key in browser: Never</span>
+          <span>YouCam connection: {formatYouCamStatus(workflowStatus)}</span>
+          <span>Secret keys: hidden from shoppers</span>
         </div>
 
         <label className="upload-field">
@@ -363,7 +371,7 @@ export function ConsumerTryOnPreflight() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={previewUrl} alt="Selected private try-on preview" />
             <div>
-              <strong>Full private preview</strong>
+              <strong>Photo preview for this try-on</strong>
               <p>
                 {imageDetails?.pixelWidth} × {imageDetails?.pixelHeight} ·{" "}
                 {imageDetails?.fileName}
@@ -399,7 +407,7 @@ export function ConsumerTryOnPreflight() {
           type="submit"
           disabled={isLoading || isBusy || products.length === 0}
         >
-          {isBusy ? "Starting secure try-on…" : "Generate virtual try-on"}
+          {isBusy ? "Starting private try-on…" : "Generate virtual try-on"}
         </button>
 
         {message ? (
@@ -411,7 +419,7 @@ export function ConsumerTryOnPreflight() {
 
         {job ? (
           <div
-            className={`readiness-result ${
+            className={`readiness-result tryon-result-panel ${
               job.status === "Failed" ? "readiness-error" : "readiness-ready"
             }`}
             role="status"
@@ -421,8 +429,8 @@ export function ConsumerTryOnPreflight() {
             <h3>{job.message}</h3>
             {job.isDuplicate ? (
               <p>
-                Duplicate request prevented. No second provider task was
-                created.
+                Already generated. TryOnReady reused the existing result instead
+                of starting another generation request.
               </p>
             ) : null}
             {job.status === "Succeeded" && job.resultUrl ? (
@@ -433,7 +441,9 @@ export function ConsumerTryOnPreflight() {
                   alt={`Generated virtual try-on result for ${job.productName}`}
                 />
                 <p>
-                  Result ready · API units used: {job.apiUnitsConsumed}
+                  {job.apiUnitsConsumed > 0
+                    ? `Generated with YouCam · Requests used: ${job.apiUnitsConsumed}`
+                    : "Preview generated for this demonstration"}
                 </p>
                 <Link className="inline-link" href="/admin-review/">
                   View the retailer results dashboard →

@@ -20,7 +20,7 @@ export default function ProductReadinessPage() {
         </ol>
         <p>
           Passing this check does not guarantee a YouCam result. It prevents
-          obvious technical problems before the later provider step.
+          obvious image problems before a shopper starts a live try-on.
         </p>
       </aside>
     </section>

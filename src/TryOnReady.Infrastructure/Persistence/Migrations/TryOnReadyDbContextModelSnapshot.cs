@@ -68,6 +68,9 @@ namespace TryOnReady.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("SubmittedAtUtc");
 
                     b.ToTable("boutique_applications", (string)null);

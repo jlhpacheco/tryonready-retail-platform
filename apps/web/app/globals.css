@@ -1,16 +1,19 @@
 :root {
-  --ink: #2a1c18;
-  --muted: #715f57;
-  --paper: #fffaf3;
-  --paper-deep: #f3e7d9;
-  --clay: #a9573f;
-  --clay-dark: #7a3528;
-  --chocolate: #402820;
-  --sage: #66745c;
-  --line: #dbcdbf;
+  --ink: #111111;
+  --muted: #606060;
+  --paper: #ffffff;
+  --paper-deep: #f3f3f1;
+  --clay: #d8563c;
+  --clay-dark: #a83220;
+  --chocolate: #111111;
+  --sage: #38644d;
+  --line: #d8d8d5;
   --white: #ffffff;
-  --shadow: 0 24px 70px rgba(72, 42, 30, 0.13);
-  --radius: 1.5rem;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
+  --radius: 0.25rem;
+  --font-serif:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
 * {
@@ -61,9 +64,40 @@ a {
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid rgba(64, 40, 32, 0.09);
-  background: rgba(255, 250, 243, 0.94);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(14px);
+}
+
+.announcement-bar {
+  display: flex;
+  min-height: 2.75rem;
+  padding: 0.55rem clamp(1rem, 4vw, 3rem);
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1.4rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper-deep);
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.announcement-bar span {
+  position: relative;
+}
+
+.announcement-bar span::before {
+  position: absolute;
+  left: -0.85rem;
+  color: var(--clay);
+  content: "•";
+}
+
+.announcement-bar strong {
+  color: var(--clay-dark);
 }
 
 .header-inner,
@@ -100,7 +134,7 @@ a {
   width: 2.15rem;
   height: 2.15rem;
   place-items: center;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--chocolate);
   color: var(--paper);
   font-size: 0.68rem;
@@ -117,7 +151,7 @@ a {
 }
 
 .nav-list a {
-  color: var(--muted);
+  color: var(--ink);
   font-size: 0.86rem;
   font-weight: 650;
   text-decoration: none;
@@ -134,7 +168,7 @@ a {
   padding-block: clamp(4rem, 8vw, 7.5rem);
   align-items: center;
   gap: clamp(2.5rem, 7vw, 6rem);
-  grid-template-columns: minmax(0, 1.05fr) minmax(19rem, 0.75fr);
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.85fr);
 }
 
 .hero-copy {
@@ -164,12 +198,12 @@ h3 {
 }
 
 h1 {
-  max-width: 12ch;
+  max-width: 13ch;
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(3.35rem, 7.8vw, 6.75rem);
-  font-weight: 500;
-  letter-spacing: -0.065em;
+  font-family: var(--font-serif);
+  font-size: clamp(3.1rem, 6.6vw, 6rem);
+  font-weight: 780;
+  letter-spacing: -0.055em;
 }
 
 .hero-intro {
@@ -183,7 +217,7 @@ h1 {
   max-width: 39rem;
   margin: 1.4rem 0 0;
   padding-left: 1rem;
-  border-left: 4px solid var(--clay);
+  border-left: 3px solid var(--ink);
   color: var(--ink);
   font-size: 0.98rem;
   font-weight: 750;
@@ -203,7 +237,7 @@ h1 {
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 0.2rem;
   font-weight: 760;
   text-decoration: none;
   transition:
@@ -223,7 +257,7 @@ h1 {
 }
 
 .button-primary {
-  background: var(--clay);
+  background: var(--ink);
   color: var(--white);
 }
 
@@ -245,7 +279,7 @@ h1 {
 .operations-receipt {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--chocolate);
   color: var(--white);
   box-shadow: 0 30px 80px rgba(64, 40, 32, 0.22);
@@ -299,7 +333,7 @@ h1 {
   width: 7rem;
   height: 7rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.35rem;
+  border-radius: 0;
   background: var(--paper);
   object-fit: contain;
 }
@@ -394,7 +428,7 @@ h1 {
   margin: 0;
   padding: 2rem clamp(1rem, 4vw, 4rem);
   align-content: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .trust-strip p + p {
@@ -402,9 +436,16 @@ h1 {
 }
 
 .trust-strip strong {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: 1.18rem;
+  font-weight: 780;
+}
+
+.trust-number {
+  color: var(--clay-dark) !important;
+  font-size: 0.68rem !important;
+  font-weight: 850;
+  letter-spacing: 0.12em;
 }
 
 .trust-strip span {
@@ -417,6 +458,43 @@ h1 {
   padding-block: clamp(5rem, 10vw, 9rem);
 }
 
+.people-story {
+  display: grid;
+  width: min(100% - 2rem, 75rem);
+  margin-inline: auto;
+  padding-block: clamp(5rem, 9vw, 8rem);
+  align-items: end;
+  gap: clamp(2rem, 7vw, 7rem);
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+}
+
+.people-story-heading h2 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  font-weight: 780;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.people-story-copy {
+  display: grid;
+  gap: 1rem;
+}
+
+.people-story-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.people-story-copy strong {
+  padding-top: 1rem;
+  border-top: 3px solid var(--ink);
+  font-size: 1rem;
+}
+
 .section-heading {
   max-width: 50rem;
   margin-bottom: 3rem;
@@ -427,10 +505,10 @@ h1 {
 .closing-section h2,
 .placeholder-shell h1 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
+  font-family: var(--font-serif);
+  font-size: clamp(2.35rem, 4.5vw, 4rem);
+  font-weight: 780;
+  letter-spacing: -0.045em;
 }
 
 .section-heading > p:last-child {
@@ -442,17 +520,17 @@ h1 {
 .workflow-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .workflow-card {
   display: flex;
-  min-height: 20rem;
+  min-height: 22rem;
   padding: clamp(1.4rem, 4vw, 2.4rem);
   flex-direction: column;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0;
+  background: var(--white);
   text-decoration: none;
   transition:
     transform 180ms ease,
@@ -475,10 +553,10 @@ h1 {
 
 .workflow-card h3 {
   margin: 3.25rem 0 0.8rem;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.75rem, 3vw, 2.4rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-family: var(--font-serif);
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  font-weight: 780;
+  letter-spacing: -0.025em;
 }
 
 .workflow-card p {
@@ -510,13 +588,13 @@ h1 {
 .privacy-grid article {
   padding: 1.6rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--white);
 }
 
 .privacy-grid h3 {
   margin: 0 0 1.2rem;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.35rem;
   font-weight: 600;
 }
@@ -560,8 +638,8 @@ h1 {
 .closing-section {
   margin-bottom: 6rem;
   padding: clamp(3rem, 7vw, 6rem);
-  border-radius: 2rem;
-  background: var(--clay-dark);
+  border-radius: 0;
+  background: var(--ink);
   color: var(--white);
 }
 
@@ -595,7 +673,7 @@ h1 {
 }
 
 .footer-brand {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -633,14 +711,14 @@ h1 {
 .placeholder-panel {
   padding: clamp(1.5rem, 4vw, 2.5rem);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--white);
   box-shadow: 0 20px 55px rgba(72, 42, 30, 0.08);
 }
 
 .placeholder-panel h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.6rem;
   font-weight: 600;
 }
@@ -715,7 +793,7 @@ h1 {
   min-height: 3.25rem;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  border-radius: 0.2rem;
   background: var(--white);
   color: var(--ink);
   font: inherit;
@@ -748,7 +826,7 @@ h1 {
   padding: 1rem;
   gap: 0.8rem;
   border: 1px solid var(--line);
-  border-radius: 1rem;
+  border-radius: 0;
   background: var(--white);
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -800,7 +878,7 @@ h1 {
 
 .readiness-result h2 {
   margin: 0.25rem 0 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -847,7 +925,7 @@ h1 {
   top: 7rem;
   padding: clamp(1.5rem, 4vw, 2.3rem);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--chocolate);
   color: var(--white);
 }
@@ -858,7 +936,7 @@ h1 {
 
 .readiness-help h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
 }
@@ -909,7 +987,7 @@ h1 {
   padding: clamp(1.25rem, 4vw, 2.25rem);
   gap: 1rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--white);
   box-shadow: var(--shadow);
 }
@@ -926,7 +1004,7 @@ h1 {
   min-height: 3.25rem;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  border-radius: 0.2rem;
   background: var(--paper);
   color: var(--ink);
   font: inherit;
@@ -943,7 +1021,7 @@ h1 {
   padding: 1rem;
   gap: 0.35rem;
   border: 1px solid var(--line);
-  border-radius: 0.9rem;
+  border-radius: 0;
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -977,14 +1055,14 @@ h1 {
   top: 7rem;
   padding: clamp(1.5rem, 4vw, 2.3rem);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--white);
   box-shadow: 0 20px 55px rgba(72, 42, 30, 0.08);
 }
 
 .application-help h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
 }
@@ -1075,7 +1153,7 @@ h1 {
   align-items: end;
   gap: 1.5rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--chocolate);
   color: var(--white);
   grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 1.2fr);
@@ -1087,7 +1165,7 @@ h1 {
 
 .dashboard-panel h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3vw, 2.25rem);
 }
 
@@ -1100,7 +1178,7 @@ h1 {
 
 .dashboard-grid div {
   padding: 0.8rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -1113,7 +1191,7 @@ h1 {
 
 .dashboard-grid dd {
   margin: 0.25rem 0 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.8rem;
   font-weight: 600;
 }
@@ -1121,13 +1199,13 @@ h1 {
 .admin-panel {
   padding: clamp(1.2rem, 3vw, 2rem);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.5);
 }
 
 .panel-heading h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
 }
@@ -1143,7 +1221,7 @@ h1 {
   margin-top: 1rem;
   padding: 1.2rem;
   border: 1px solid var(--line);
-  border-radius: 1rem;
+  border-radius: 0;
   background: var(--white);
 }
 
@@ -1152,7 +1230,7 @@ h1 {
   width: 100%;
   max-height: 18rem;
   margin-bottom: 1rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   object-fit: contain;
   background: var(--paper);
 }
@@ -1176,7 +1254,7 @@ h1 {
 
 .review-card-heading h3 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.4rem;
 }
 
@@ -1188,7 +1266,7 @@ h1 {
 
 .status-pill {
   padding: 0.35rem 0.65rem;
-  border-radius: 999px;
+  border-radius: 0.15rem;
   background: var(--paper-deep);
   color: var(--clay-dark);
   font-size: 0.72rem;
@@ -1230,7 +1308,7 @@ h1 {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: 0.2rem;
   background: var(--white);
   color: var(--ink);
   font: inherit;
@@ -1247,7 +1325,7 @@ h1 {
   min-height: 2.75rem;
   padding: 0.65rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 0.2rem;
   background: var(--paper);
   color: var(--chocolate);
   cursor: pointer;
@@ -1284,7 +1362,7 @@ h1 {
   overflow: hidden;
   padding: 1.2rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--white);
   box-shadow: var(--shadow);
 }
@@ -1293,7 +1371,7 @@ h1 {
   display: block;
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 1rem;
+  border-radius: 0;
   object-fit: cover;
 }
 
@@ -1311,7 +1389,7 @@ h1 {
 
 .consumer-form .form-heading h2 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 500;
   letter-spacing: -0.055em;
@@ -1326,7 +1404,7 @@ h1 {
   min-height: 3.25rem;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  border-radius: 0.2rem;
   background: var(--white);
   color: var(--ink);
   font: inherit;
@@ -1345,7 +1423,7 @@ h1 {
   justify-content: space-between;
   gap: 0.5rem 1rem;
   border: 1px solid #a9bba0;
-  border-radius: 0.8rem;
+  border-radius: 0;
   background: #f0f6ed;
   color: #3f6537;
   font-size: 0.82rem;
@@ -1359,7 +1437,7 @@ h1 {
   align-items: start;
   gap: 1rem;
   border: 1px solid var(--line);
-  border-radius: 1rem;
+  border-radius: 0;
   background: var(--white);
   grid-template-columns: minmax(8rem, 10rem) 1fr;
 }
@@ -1369,7 +1447,7 @@ h1 {
   width: 100%;
   height: auto;
   max-height: 16rem;
-  border-radius: 0.7rem;
+  border-radius: 0;
   object-fit: contain;
   object-position: center top;
   background: var(--paper);
@@ -1399,14 +1477,14 @@ h1 {
 .privacy-box {
   margin-top: 1rem;
   padding: 1.1rem;
-  border-radius: 1rem;
+  border-radius: 0;
   background: var(--chocolate);
   color: var(--white);
 }
 
 .privacy-box h3 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif);
   font-size: 1.35rem;
 }
 
@@ -1419,14 +1497,19 @@ h1 {
 
 .generated-result {
   margin-top: 1rem;
+  scroll-margin-top: 8.5rem;
 }
 
 .generated-result img {
   display: block;
-  width: min(100%, 34rem);
-  max-height: 38rem;
-  border-radius: 1rem;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 30rem;
+  margin-inline: auto;
+  border-radius: 0;
   object-fit: contain;
+  object-position: center top;
   background: var(--white);
 }
 
@@ -1462,6 +1545,7 @@ h1 {
   }
 
   .privacy-section,
+  .people-story,
   .placeholder-content,
   .readiness-shell,
   .application-shell,
@@ -1472,6 +1556,10 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .workflow-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .readiness-help,
   .application-help {
     position: static;
@@ -1479,9 +1567,20 @@ h1 {
 }
 
 @media (max-width: 620px) {
+  .announcement-bar {
+    display: grid;
+    gap: 0.3rem;
+    justify-items: center;
+  }
+
+  .announcement-bar span::before {
+    display: none;
+  }
+
   .header-inner,
   .site-footer,
   .hero,
+  .people-story,
   .workflow-section,
   .privacy-section,
   .closing-section,

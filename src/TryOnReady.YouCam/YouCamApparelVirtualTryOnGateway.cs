@@ -76,7 +76,7 @@ internal sealed class YouCamApparelVirtualTryOnGateway(
             return new VirtualTryOnSubmission(
                 VirtualTryOnSubmissionStatus.Accepted,
                 taskId,
-                "YouCam accepted the secure server-side task.",
+                "YouCam accepted the private try-on request.",
                 ConsumesApiUnits: true);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

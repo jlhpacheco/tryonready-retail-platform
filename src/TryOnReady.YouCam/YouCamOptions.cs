@@ -8,6 +8,8 @@ public sealed class YouCamOptions
 
     public bool SimulationEnabled { get; init; }
 
+    public string SimulationResultPath { get; init; } = string.Empty;
+
     public Uri BaseUrl { get; init; } = new("https://yce-api-01.makeupar.com");
 
     public string ApiKey { get; init; } = string.Empty;

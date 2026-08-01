@@ -32,24 +32,34 @@ public sealed class InMemoryBoutiqueApplicationService
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var application = new BoutiqueApplicationView(
-            Guid.NewGuid(),
-            boutiqueName.Trim(),
-            ownerName.Trim(),
-            email.Trim(),
-            employeeCount,
-            primarySalesChannel.Trim(),
-            string.IsNullOrWhiteSpace(website) ? null : website.Trim(),
-            "Submitted",
-            DateTimeOffset.UtcNow,
-            null);
+        var normalizedEmail = email.Trim().ToLowerInvariant();
 
         lock (syncRoot)
         {
-            applications.Add(application);
-        }
+            var existing = applications.SingleOrDefault(
+                application => string.Equals(
+                    application.Email,
+                    normalizedEmail,
+                    StringComparison.OrdinalIgnoreCase));
+            if (existing is not null)
+            {
+                return Task.FromResult(existing);
+            }
 
-        return Task.FromResult(application);
+            var application = new BoutiqueApplicationView(
+                Guid.NewGuid(),
+                boutiqueName.Trim(),
+                ownerName.Trim(),
+                normalizedEmail,
+                employeeCount,
+                primarySalesChannel.Trim(),
+                string.IsNullOrWhiteSpace(website) ? null : website.Trim(),
+                "Submitted",
+                DateTimeOffset.UtcNow,
+                null);
+            applications.Add(application);
+            return Task.FromResult(application);
+        }
     }
 
     public Task<BoutiqueApplicationView?> RecordDecisionAsync(

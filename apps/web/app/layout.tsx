@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#402820",
+  themeColor: "#111111",
   colorScheme: "light",
 };
 
@@ -57,6 +57,12 @@ export default function RootLayout({
               </ul>
             </nav>
           </div>
+          <div className="announcement-bar">
+            <strong>Independent boutique virtual try-on</strong>
+            <span>Guided setup</span>
+            <span>No guest account</span>
+            <span>Garment checked before try-on</span>
+          </div>
         </header>
         <main id="main-content">{children}</main>
         <footer className="site-footer">
@@ -67,8 +73,8 @@ export default function RootLayout({
             <p>Virtual try-on that a small boutique can actually run.</p>
           </div>
           <p className="footer-note">
-            Retailer-paid virtual try-on offered free to guest customers. API
-            keys remain server-side.
+            Retailer-paid virtual try-on offered free to guest customers.
+            YouCam credentials stay inside the secure app.
           </p>
         </footer>
       </body>

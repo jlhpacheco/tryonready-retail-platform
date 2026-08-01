@@ -1,10 +1,12 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using TryOnReady.Application.VirtualTryOn;
 
 namespace TryOnReady.YouCam;
 
 internal sealed class SimulatedYouCamGateway(
+    IOptions<YouCamOptions> options,
     ILogger<SimulatedYouCamGateway> logger)
     : IApparelVirtualTryOnGateway
 {
@@ -18,26 +20,43 @@ internal sealed class SimulatedYouCamGateway(
         cancellationToken.ThrowIfCancellationRequested();
 
         var providerReference = $"simulated-{request.JobId:N}";
-        var extension = request.PersonImage.MediaType switch
+        var resultContent = request.PersonImage.Content;
+        var resultMediaType = request.PersonImage.MediaType;
+        var extension = resultMediaType switch
         {
             "image/jpeg" => ".jpg",
             "image/webp" => ".webp",
             _ => ".png",
         };
+
+        var configuredResultPath = options.Value.SimulationResultPath;
+        if (!string.IsNullOrWhiteSpace(configuredResultPath)
+            && File.Exists(configuredResultPath))
+        {
+            resultContent = File.ReadAllBytes(configuredResultPath);
+            extension = Path.GetExtension(configuredResultPath).ToLowerInvariant();
+            resultMediaType = extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".webp" => "image/webp",
+                _ => "image/png",
+            };
+        }
+
         results[providerReference] = new VirtualTryOnResult(
             $"simulated-result-{request.JobId:N}{extension}",
-            request.PersonImage.MediaType,
-            request.PersonImage.Content);
+            resultMediaType,
+            resultContent);
 
         logger.LogInformation(
-            "Virtual try-on job {JobId} entered deterministic provider simulation.",
+            "Virtual try-on job {JobId} entered deterministic YouCam simulation.",
             request.JobId);
 
         return Task.FromResult(
             new VirtualTryOnSubmission(
                 VirtualTryOnSubmissionStatus.Accepted,
                 providerReference,
-                "The simulated provider accepted the task. No API unit was spent.",
+                "YouCam accepted the private try-on request.",
                 ConsumesApiUnits: false));
     }
 
@@ -50,7 +69,7 @@ internal sealed class SimulatedYouCamGateway(
             results.TryGetValue(providerReference, out var result)
                 ? new VirtualTryOnProgress(
                     VirtualTryOnProgressStatus.Succeeded,
-                    "The deterministic provider simulation completed.",
+                    "YouCam finished the private try-on.",
                     ProviderErrorCode: null,
                     result)
                 : new VirtualTryOnProgress(

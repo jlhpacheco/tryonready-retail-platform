@@ -199,7 +199,7 @@ export function AdminReviewWorkspace() {
         <p className="eyebrow">Step 3 · Admin review</p>
         <h1>Review the boutique and product before consumer try-on.</h1>
         <p>
-          This workspace shows business details, readiness, and provider status.
+          This workspace shows business details, readiness, and YouCam status.
           It never shows a consumer photograph or secret value.
         </p>
       </header>
@@ -233,7 +233,7 @@ export function AdminReviewWorkspace() {
             </dd>
           </div>
           <div>
-            <dt>API units used</dt>
+            <dt>YouCam requests used</dt>
             <dd>{dashboard?.apiUnitsConsumed ?? 0}</dd>
           </div>
           <div>
@@ -345,7 +345,7 @@ export function AdminReviewWorkspace() {
                   <dd>{review.readinessPassed ? "Passed" : "Needs work"}</dd>
                 </div>
                 <div>
-                  <dt>YouCam</dt>
+                  <dt>YouCam readiness</dt>
                   <dd>{review.providerStatus}</dd>
                 </div>
                 {(() => {

@@ -37,3 +37,8 @@ test-results/
 tmp/
 __pycache__/
 *.pyc
+
+# Generated demo and production output
+# Keep rendered videos, browser traces, logs, temporary audio, QA frames,
+# downloaded tool binaries, and intermediate production files out of Git.
+/artifacts/

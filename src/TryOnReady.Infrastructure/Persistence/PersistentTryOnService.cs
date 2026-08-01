@@ -72,7 +72,7 @@ internal sealed class PersistentTryOnService(
             ProductId = product.Id,
             Product = product,
             Status = "Pending",
-            Message = "Secure upload accepted. Waiting for server-side processing.",
+            Message = "Photo received. Preparing the private try-on.",
             RequestFingerprint = fingerprint,
             PersonAssetId = personAsset.Id,
             PersonMediaType = personAsset.MediaType,
@@ -205,4 +205,3 @@ internal sealed class PersistentTryOnService(
             job.UpdatedAtUtc,
             job.CompletedAtUtc);
 }
-
