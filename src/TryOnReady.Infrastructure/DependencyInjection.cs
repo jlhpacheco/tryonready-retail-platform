@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using TryOnReady.Application.AdminReview;
 using TryOnReady.Application.BoutiqueApplications;
 using TryOnReady.Application.Catalog;
@@ -70,7 +71,7 @@ public static class DependencyInjection
                 }
 
                 options.UseNpgsql(
-                    connectionString,
+                    NormalizePostgresConnectionString(connectionString),
                     postgres => postgres.EnableRetryOnFailure(3));
             });
 
@@ -85,6 +86,71 @@ public static class DependencyInjection
         services.AddHostedService<TryOnJobProcessor>();
         services.AddHostedService<PrivateAssetCleanupService>();
         return services;
+    }
+
+    internal static string NormalizePostgresConnectionString(string connectionString)
+    {
+        if (!connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) &&
+            !connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+        {
+            return connectionString;
+        }
+
+        try
+        {
+            var uri = new Uri(connectionString, UriKind.Absolute);
+            var userInfo = uri.UserInfo.Split(':', 2);
+            if (userInfo.Length != 2 || string.IsNullOrWhiteSpace(uri.Host))
+            {
+                throw new FormatException();
+            }
+
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = uri.Host,
+                Port = uri.IsDefaultPort ? 5432 : uri.Port,
+                Username = Uri.UnescapeDataString(userInfo[0]),
+                Password = Uri.UnescapeDataString(userInfo[1]),
+                Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
+            };
+
+            foreach (var queryPart in uri.Query.TrimStart('?')
+                         .Split('&', StringSplitOptions.RemoveEmptyEntries))
+            {
+                var pair = queryPart.Split('=', 2);
+                if (!pair[0].Equals("sslmode", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var sslMode = pair.Length == 2
+                    ? Uri.UnescapeDataString(pair[1])
+                    : string.Empty;
+                builder.SslMode = sslMode.ToLowerInvariant() switch
+                {
+                    "disable" => SslMode.Disable,
+                    "prefer" => SslMode.Prefer,
+                    "require" => SslMode.Require,
+                    "verify-ca" => SslMode.VerifyCA,
+                    "verify-full" => SslMode.VerifyFull,
+                    _ => builder.SslMode,
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(builder.Database))
+            {
+                throw new FormatException();
+            }
+
+            return builder.ConnectionString;
+        }
+        catch (Exception exception) when (
+            exception is UriFormatException or FormatException or ArgumentException)
+        {
+            throw new InvalidOperationException(
+                "The PostgreSQL connection URI is invalid.",
+                exception);
+        }
     }
 
     public static async Task MigrateTryOnReadyDatabaseAsync(
