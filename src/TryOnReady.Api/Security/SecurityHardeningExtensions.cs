@@ -14,13 +14,6 @@ internal static class SecurityHardeningExtensions
     public static IServiceCollection AddTryOnReadySecurity(
         this IServiceCollection services)
     {
-        services.AddHsts(
-            options =>
-            {
-                options.MaxAge = TimeSpan.FromDays(180);
-                options.IncludeSubDomains = false;
-                options.Preload = false;
-            });
         services.AddRateLimiter(
             options =>
             {
@@ -53,10 +46,7 @@ internal static class SecurityHardeningExtensions
     public static IApplicationBuilder UseTryOnReadySecurityHeaders(
         this WebApplication app)
     {
-        if (app.Environment.IsProduction())
-        {
-            app.UseHsts();
-        }
+        var isProduction = app.Environment.IsProduction();
 
         app.Use(
             async (context, next) =>
@@ -65,6 +55,11 @@ internal static class SecurityHardeningExtensions
                     () =>
                     {
                         var headers = context.Response.Headers;
+                        if (isProduction)
+                        {
+                            headers["Strict-Transport-Security"] =
+                                "max-age=15552000";
+                        }
                         headers["Content-Security-Policy"] =
                             "default-src 'self'; base-uri 'self'; object-src 'none'; " +
                             "frame-ancestors 'none'; form-action 'self'; " +
