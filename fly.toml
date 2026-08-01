@@ -7,7 +7,7 @@ primary_region = "sjc"
 [env]
   ASPNETCORE_ENVIRONMENT = "Production"
   ASPNETCORE_URLS = "http://0.0.0.0:8080"
-  AllowedHosts = "tryonready-demo.fly.dev;*.tryonready-demo.internal;localhost;127.0.0.1"
+  AllowedHosts = "*.fly.dev;*.internal;localhost;127.0.0.1;[::1]"
   HostedDemo__AllowedGarmentImageSha256 = "8F02878034877B38CC1E9F8372BFD145819E6FFFF74F5E295709E3AF8F5FD907"
   HostedDemo__AllowedPersonImageSha256 = "2E139397587FE1E624CFB6DD51CB89A55D601CCE72705428987D872842946182"
   HostedDemo__SyntheticOnly = "true"
@@ -38,6 +38,10 @@ primary_region = "sjc"
     method = "GET"
     path = "/health"
     timeout = "5s"
+
+    [http_service.checks.headers]
+      Host = "tryonready-demo.fly.dev"
+      X-Forwarded-Proto = "https"
 
 [[vm]]
   memory = "512mb"

@@ -32,11 +32,12 @@ if (args is ["migrate"])
 }
 
 app.UseTryOnReadySecurityHeaders();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseDefaultFiles();
-app.UseStaticFiles();
 
 if (!app.Environment.IsProduction())
 {
