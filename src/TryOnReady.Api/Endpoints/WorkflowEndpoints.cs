@@ -1,9 +1,11 @@
 using System.Globalization;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using TryOnReady.Api.Authentication;
+using TryOnReady.Api.Security;
 using TryOnReady.Application.Catalog;
 using TryOnReady.Application.TryOn;
 using TryOnReady.Infrastructure.Persistence;
@@ -23,7 +25,8 @@ internal static class WorkflowEndpoints
         };
 
     public static IServiceCollection ConfigureWorkflowUploads(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.Configure<FormOptions>(
             options =>
@@ -31,6 +34,17 @@ internal static class WorkflowEndpoints
                 options.MultipartBodyLengthLimit = 22 * 1024 * 1024;
                 options.ValueLengthLimit = 2 * 1024 * 1024;
             });
+        services.AddOptions<HostedDemoOptions>()
+            .Bind(configuration.GetSection(HostedDemoOptions.SectionName))
+            .Validate(
+                options => !options.SyntheticOnly ||
+                    IsSha256(options.AllowedGarmentImageSha256),
+                "HostedDemo:AllowedGarmentImageSha256 must be a SHA-256 hash when synthetic-only mode is enabled.")
+            .Validate(
+                options => !options.SyntheticOnly ||
+                    IsSha256(options.AllowedPersonImageSha256),
+                "HostedDemo:AllowedPersonImageSha256 must be a SHA-256 hash when synthetic-only mode is enabled.")
+            .ValidateOnStart();
         return services;
     }
 
@@ -41,7 +55,8 @@ internal static class WorkflowEndpoints
                 "/api/status",
                 (
                     IOptions<YouCamOptions> youCam,
-                    IOptions<PersistenceOptions> persistence) =>
+                    IOptions<PersistenceOptions> persistence,
+                    IOptions<HostedDemoOptions> hostedDemo) =>
                     TypedResults.Ok(
                         new
                         {
@@ -58,6 +73,8 @@ internal static class WorkflowEndpoints
                                 ? "previously completed controlled demonstration"
                                 : null,
                             playbackMakesNewProviderRequests = false,
+                            syntheticOnlyJudgeDemo =
+                                hostedDemo.Value.SyntheticOnly,
                             persistence = persistence.Value.Provider,
                             apiKeyExposedToBrowser = false,
                         }))
@@ -80,8 +97,14 @@ internal static class WorkflowEndpoints
                 async (
                     HttpRequest request,
                     IProductCatalogService catalog,
+                    IOptions<HostedDemoOptions> hostedDemo,
                     CancellationToken cancellationToken) =>
                 {
+                    if (!IsSameOriginMutation(request))
+                    {
+                        return SameOriginRequired();
+                    }
+
                     if (!request.HasFormContentType)
                     {
                         return Results.ValidationProblem(
@@ -109,6 +132,14 @@ internal static class WorkflowEndpoints
                     {
                         return Results.ValidationProblem(
                             Error("garmentImage", exception.Message));
+                    }
+
+                    if (hostedDemo.Value.SyntheticOnly &&
+                        !MatchesSha256(
+                            upload.Sha256,
+                            hostedDemo.Value.AllowedGarmentImageSha256))
+                    {
+                        return SyntheticFixtureRequired();
                     }
 
                     try
@@ -143,6 +174,7 @@ internal static class WorkflowEndpoints
                     }
                 })
             .DisableAntiforgery()
+            .RequireRateLimiting(SecurityRateLimitPolicies.Upload)
             .WithName("SubmitProduct")
             .WithTags("Catalog")
             .RequireAuthorization(DemoAccessPolicies.Retailer);
@@ -192,8 +224,14 @@ internal static class WorkflowEndpoints
                 async (
                     HttpRequest request,
                     ITryOnService tryOnService,
+                    IOptions<HostedDemoOptions> hostedDemo,
                     CancellationToken cancellationToken) =>
                 {
+                    if (!IsSameOriginMutation(request))
+                    {
+                        return SameOriginRequired();
+                    }
+
                     if (!request.HasFormContentType)
                     {
                         return Results.ValidationProblem(
@@ -244,6 +282,14 @@ internal static class WorkflowEndpoints
                             Error("personImage", exception.Message));
                     }
 
+                    if (hostedDemo.Value.SyntheticOnly &&
+                        !MatchesSha256(
+                            upload.Sha256,
+                            hostedDemo.Value.AllowedPersonImageSha256))
+                    {
+                        return SyntheticFixtureRequired();
+                    }
+
                     try
                     {
                         var job = await tryOnService.SubmitAsync(
@@ -266,6 +312,7 @@ internal static class WorkflowEndpoints
                     }
                 })
             .DisableAntiforgery()
+            .RequireRateLimiting(SecurityRateLimitPolicies.Upload)
             .WithName("SubmitTryOnJob")
             .WithTags("Consumer Try-On");
 
@@ -392,6 +439,7 @@ internal static class WorkflowEndpoints
             image.ContentType,
             information.Width,
             information.Height,
+            Convert.ToHexString(SHA256.HashData(content)),
             content);
     }
 
@@ -444,6 +492,64 @@ internal static class WorkflowEndpoints
             [key] = [message],
         };
 
+    private static bool IsSameOriginMutation(HttpRequest request)
+    {
+        if (!request.Headers.TryGetValue(
+                "X-TryOnReady-Request",
+                out var verification) ||
+            verification.Count != 1 ||
+            verification[0] != "judge-demo")
+        {
+            return false;
+        }
+
+        if (request.Headers.TryGetValue("Sec-Fetch-Site", out var fetchSite) &&
+            fetchSite.Count == 1 &&
+            fetchSite[0] is not ("same-origin" or "same-site" or "none"))
+        {
+            return false;
+        }
+
+        if (!request.Headers.TryGetValue("Origin", out var origin) ||
+            origin.Count != 1)
+        {
+            return true;
+        }
+
+        return Uri.TryCreate(origin[0], UriKind.Absolute, out var originUri) &&
+            string.Equals(
+                originUri.Authority,
+                request.Host.Value,
+                StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static IResult SameOriginRequired() =>
+        Results.Problem(
+            statusCode: StatusCodes.Status403Forbidden,
+            title: "Same-origin request required",
+            detail: "This upload must originate from the TryOnReady judge site.");
+
+    private static IResult SyntheticFixtureRequired() =>
+        Results.Problem(
+            statusCode: StatusCodes.Status403Forbidden,
+            title: "Synthetic fixture required",
+            detail: "This hosted judge demo accepts only the approved synthetic fixture.");
+
+    private static bool IsSha256(string value) =>
+        value.Length == 64 && value.All(char.IsAsciiHexDigit);
+
+    private static bool MatchesSha256(string actual, string expected)
+    {
+        if (!IsSha256(expected))
+        {
+            return false;
+        }
+
+        return CryptographicOperations.FixedTimeEquals(
+            Convert.FromHexString(actual),
+            Convert.FromHexString(expected));
+    }
+
     private static void SetPrivateImageHeaders(HttpResponse response)
     {
         response.Headers.CacheControl = "private, no-store, max-age=0";
@@ -456,5 +562,17 @@ internal static class WorkflowEndpoints
         string MediaType,
         int PixelWidth,
         int PixelHeight,
+        string Sha256,
         byte[] Content);
+}
+
+internal sealed class HostedDemoOptions
+{
+    public const string SectionName = "HostedDemo";
+
+    public bool SyntheticOnly { get; set; }
+
+    public string AllowedGarmentImageSha256 { get; set; } = string.Empty;
+
+    public string AllowedPersonImageSha256 { get; set; } = string.Empty;
 }

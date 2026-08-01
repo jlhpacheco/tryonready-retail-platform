@@ -266,6 +266,7 @@ export function ConsumerTryOnPreflight() {
     try {
       const response = await fetch("/api/try-on-jobs", {
         method: "POST",
+        headers: { "X-TryOnReady-Request": "judge-demo" },
         body: form,
       });
 
@@ -399,6 +400,10 @@ export function ConsumerTryOnPreflight() {
 
         <div className="privacy-box">
           <h3>Your photo stays private</h3>
+          <p>
+            Hosted judge demo: use only the provided synthetic adult fixture.
+            Real customer photographs are not accepted.
+          </p>
           <ul>
             <li>The boutique never receives your source or generated photo.</li>
             <li>No image content is written to application logs.</li>

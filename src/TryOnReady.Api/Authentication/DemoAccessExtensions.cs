@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
+using TryOnReady.Api.Security;
 
 namespace TryOnReady.Api.Authentication;
 
@@ -11,7 +12,8 @@ internal static class DemoAccessExtensions
 {
     public static IServiceCollection AddTryOnReadyDemoAccess(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
         services.Configure<DemoAccessOptions>(
             configuration.GetSection(DemoAccessOptions.SectionName));
@@ -19,13 +21,17 @@ internal static class DemoAccessExtensions
             .AddCookie(
                 options =>
                 {
-                    // A non-prefixed name allows the HTTP-only local judge
-                    // demo to receive the cookie. Fly.io serves the same
-                    // cookie over HTTPS, where SameAsRequest marks it Secure.
-                    options.Cookie.Name = "TryOnReadyDemo";
+                    var production = environment.IsProduction();
+                    options.Cookie.Name = production
+                        ? "__Host-TryOnReadyDemo"
+                        : "TryOnReadyDemo";
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SameSite = SameSiteMode.Strict;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                    options.Cookie.SecurePolicy = production
+                        ? CookieSecurePolicy.Always
+                        : CookieSecurePolicy.SameAsRequest;
+                    options.Cookie.Path = "/";
+                    options.Cookie.Domain = null;
                     options.ExpireTimeSpan = TimeSpan.FromHours(8);
                     options.SlidingExpiration = false;
                     options.LoginPath = "/sign-in/";
@@ -134,6 +140,7 @@ internal static class DemoAccessExtensions
                         });
                 })
             .AllowAnonymous()
+            .RequireRateLimiting(SecurityRateLimitPolicies.Login)
             .WithName("DemoLogin")
             .WithTags("Demo Access");
 

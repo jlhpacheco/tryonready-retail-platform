@@ -5,7 +5,12 @@ primary_region = "sjc"
   dockerfile = "Dockerfile"
 
 [env]
+  ASPNETCORE_ENVIRONMENT = "Production"
   ASPNETCORE_URLS = "http://0.0.0.0:8080"
+  AllowedHosts = "tryonready-demo.fly.dev;*.tryonready-demo.internal;localhost;127.0.0.1"
+  HostedDemo__AllowedGarmentImageSha256 = "8F02878034877B38CC1E9F8372BFD145819E6FFFF74F5E295709E3AF8F5FD907"
+  HostedDemo__AllowedPersonImageSha256 = "2E139397587FE1E624CFB6DD51CB89A55D601CCE72705428987D872842946182"
+  HostedDemo__SyntheticOnly = "true"
   Persistence__Provider = "Postgres"
   PrivateStorage__RootPath = "/data/private"
   YouCam__Enabled = "false"

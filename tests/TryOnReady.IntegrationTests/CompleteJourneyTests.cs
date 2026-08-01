@@ -14,6 +14,9 @@ public sealed class CompleteJourneyTests : IClassFixture<TryOnReadyApiFactory>
     public CompleteJourneyTests(TryOnReadyApiFactory factory)
     {
         client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add(
+            "X-TryOnReady-Request",
+            "judge-demo");
     }
 
     [Fact]

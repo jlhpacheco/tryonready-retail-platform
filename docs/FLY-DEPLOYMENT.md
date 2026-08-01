@@ -61,6 +61,11 @@ YouCam__SimulationEnabled=true
 The UI labels it a **previously completed controlled demonstration** and states
 that playback makes zero new provider requests.
 
+The hosted site is synthetic-only. `fly.toml` enables SHA-256 allowlisting for
+the repository's Moonlight Blazer and Marisol fixtures. Real customer media is
+rejected before private storage. The application image runs as the non-root
+`.NET app` user; the mounted app volume must remain owned by UID/GID 1654.
+
 ## Migration safety
 
 Normal application startup never runs EF Core migrations. `fly.toml` defines:
@@ -94,6 +99,11 @@ the TryOnReady connection secret.
 ## Health, restart, and monitoring
 
 - HTTPS is forced on the Fly-provided `tryonready-demo.fly.dev` hostname.
+- Production sends HSTS, CSP, clickjacking, MIME-sniffing, referrer, and browser
+  permissions headers. OpenAPI is not mapped in Production.
+- Login requests are rate-limited. Multipart mutations require the app's
+  same-origin header, are rate-limited, and are serialized through a
+  one-request concurrency gate.
 - The app stays running for judge reliability and has `on-failure` restart with
   ten retries.
 - `/health` checks database connectivity, app-private disk headroom, and

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using TryOnReady.Api.Authentication;
 using TryOnReady.Api.Endpoints;
 using TryOnReady.Api.Health;
+using TryOnReady.Api.Security;
 using TryOnReady.Application.Readiness;
 using TryOnReady.Infrastructure;
 using TryOnReady.YouCam;
@@ -13,8 +14,11 @@ builder.Services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("database")
     .AddCheck<PrivateStorageHealthCheck>("private-storage")
     .AddCheck<MemoryHealthCheck>("memory");
-builder.Services.AddTryOnReadyDemoAccess(builder.Configuration);
-builder.Services.ConfigureWorkflowUploads();
+builder.Services.AddTryOnReadyDemoAccess(
+    builder.Configuration,
+    builder.Environment);
+builder.Services.ConfigureWorkflowUploads(builder.Configuration);
+builder.Services.AddTryOnReadySecurity();
 builder.Services.AddSingleton<IProductReadinessService, ProductReadinessService>();
 builder.Services.AddTryOnReadyInfrastructure(builder.Configuration);
 builder.Services.AddYouCam(builder.Configuration);
@@ -27,12 +31,21 @@ if (args is ["migrate"])
     return;
 }
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseTryOnReadySecurityHeaders();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-app.MapOpenApi();
+if (!app.Environment.IsProduction())
+{
+    app.MapOpenApi();
+}
+else
+{
+    app.Map("/openapi/{**path}", () => Results.NotFound());
+}
 app.MapHealthChecks(
     "/health",
     new HealthCheckOptions

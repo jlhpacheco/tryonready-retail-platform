@@ -190,6 +190,7 @@ export function ProductReadinessForm() {
     try {
       const response = await fetch("/api/products", {
         method: "POST",
+        headers: { "X-TryOnReady-Request": "judge-demo" },
         body: form,
       });
 
