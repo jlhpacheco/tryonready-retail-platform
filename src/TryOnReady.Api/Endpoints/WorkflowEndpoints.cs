@@ -49,9 +49,15 @@ internal static class WorkflowEndpoints
                             providerMode = youCam.Value.Enabled
                                 ? "YouCamLive"
                                 : youCam.Value.SimulationEnabled
-                                    ? "Simulation"
+                                    ? "StoredReplay"
                                     : "Disabled",
                             liveYouCamIntegration = youCam.Value.Enabled,
+                            youCamApi =
+                                "YouCam AI Clothes v3 / Apparel Virtual Try-On",
+                            demonstrationLabel = youCam.Value.SimulationEnabled
+                                ? "previously completed controlled demonstration"
+                                : null,
+                            playbackMakesNewProviderRequests = false,
                             persistence = persistence.Value.Provider,
                             apiKeyExposedToBrowser = false,
                         }))

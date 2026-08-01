@@ -148,7 +148,11 @@ test("records the guarded TryOnReady judge journey", async ({ page }) => {
   await page
     .getByRole("link", { name: /Continue to Consumer Try-On/i })
     .click();
-  await expect(page.getByText(/YouCam connection: (Live and ready|Demo mode)/)).toBeVisible();
+  await expect(
+    page.getByText(
+      /YouCam connection: (Live and ready|Stored replay · zero new provider requests)/,
+    ),
+  ).toBeVisible();
   await expect(page.getByText("Secret keys: hidden from shoppers")).toBeVisible();
   await page.getByLabel("Person image").setInputFiles(marisol);
   await expect(page.getByText(/864 × 1821/)).toBeVisible();
@@ -186,7 +190,7 @@ test("records the guarded TryOnReady judge journey", async ({ page }) => {
   ).toBeVisible();
   await expect(
     page.getByText(
-      /Generated with YouCam · Requests used: 1|Preview generated for this demonstration/,
+      /Generated with YouCam · Requests used: 1|previously completed controlled demonstration · playback makes zero new provider requests/,
     ),
   ).toBeVisible();
   await frameLocatorBelowHeader(page, ".tryon-result-panel");

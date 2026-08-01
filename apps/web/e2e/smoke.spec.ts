@@ -61,7 +61,7 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     const status = await request.get("/api/status");
     expect(status.status()).toBe(200);
     expect(await status.json()).toMatchObject({
-      providerMode: "Simulation",
+      providerMode: "StoredReplay",
       liveYouCamIntegration: false,
       apiKeyExposedToBrowser: false,
       persistence: expectedPersistence,
@@ -157,7 +157,16 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     await expect(
       page.getByRole("heading", { name: "Moonlight Blazer" }),
     ).toBeVisible();
-    await expect(page.getByText("YouCam connection: Demo mode")).toBeVisible();
+    await expect(
+      page.getByText(
+        "YouCam connection: Stored replay · zero new provider requests",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByText("previously completed controlled demonstration", {
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(page.getByText("Secret keys: hidden from shoppers")).toBeVisible();
     await page.getByLabel("Person image").setInputFiles(marisol);
     await expect(page.getByText(/864 × 1821/)).toBeVisible();
@@ -176,7 +185,13 @@ test.describe.serial("TryOnReady verified judge journey", () => {
         name: "Generated virtual try-on result for Moonlight Blazer",
       }),
     ).toBeVisible();
-    await expect(page.getByText("Result ready · Live try-ons used: 0")).toBeVisible();
+    await expect(
+      page
+        .locator(".generated-result")
+        .getByText(
+          "previously completed controlled demonstration · playback makes zero new provider requests",
+        ),
+    ).toBeVisible();
 
     await page
       .getByRole("button", { name: "Generate virtual try-on" })
@@ -204,7 +219,7 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     await expect(metric("Completed").locator("dd")).toHaveText(
       String(baseline.succeededJobs + 1),
     );
-    await expect(metric("Live try-ons used").locator("dd")).toHaveText("0");
+    await expect(metric("YouCam requests used").locator("dd")).toHaveText("0");
     await expect(metric("Duplicates stopped").locator("dd")).toHaveText(
       String(baseline.duplicateRequestsPrevented + 1),
     );

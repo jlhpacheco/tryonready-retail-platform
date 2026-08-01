@@ -87,7 +87,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static async Task InitializeTryOnReadyDatabaseAsync(
+    public static async Task MigrateTryOnReadyDatabaseAsync(
         this IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {

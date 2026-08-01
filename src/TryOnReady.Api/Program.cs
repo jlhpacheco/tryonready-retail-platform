@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using TryOnReady.Api.Authentication;
 using TryOnReady.Api.Endpoints;
+using TryOnReady.Api.Health;
 using TryOnReady.Application.Readiness;
 using TryOnReady.Infrastructure;
 using TryOnReady.YouCam;
@@ -8,7 +9,10 @@ using TryOnReady.YouCam;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("database")
+    .AddCheck<PrivateStorageHealthCheck>("private-storage")
+    .AddCheck<MemoryHealthCheck>("memory");
 builder.Services.AddTryOnReadyDemoAccess(builder.Configuration);
 builder.Services.ConfigureWorkflowUploads();
 builder.Services.AddSingleton<IProductReadinessService, ProductReadinessService>();
@@ -17,7 +21,11 @@ builder.Services.AddYouCam(builder.Configuration);
 
 var app = builder.Build();
 
-await app.Services.InitializeTryOnReadyDatabaseAsync();
+if (args is ["migrate"])
+{
+    await app.Services.MigrateTryOnReadyDatabaseAsync();
+    return;
+}
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

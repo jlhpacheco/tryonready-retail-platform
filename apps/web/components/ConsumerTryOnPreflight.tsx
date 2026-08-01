@@ -40,6 +40,9 @@ type WorkflowStatus = {
   providerMode: string;
   liveYouCamIntegration: boolean;
   apiKeyExposedToBrowser: boolean;
+  youCamApi: string;
+  demonstrationLabel: string | null;
+  playbackMakesNewProviderRequests: boolean;
 };
 
 async function readImage(file: File): Promise<ImageDetails> {
@@ -85,7 +88,9 @@ function formatYouCamStatus(status: WorkflowStatus | null): string {
     return "Checking";
   }
 
-  return status.liveYouCamIntegration ? "Live and ready" : "Demo mode";
+  return status.liveYouCamIntegration
+    ? "Live and ready"
+    : "Stored replay · zero new provider requests";
 }
 
 export function ConsumerTryOnPreflight() {
@@ -329,6 +334,14 @@ export function ConsumerTryOnPreflight() {
           <span>Secret keys: hidden from shoppers</span>
         </div>
 
+        {workflowStatus?.demonstrationLabel ? (
+          <div className="replay-truth" role="note">
+            <strong>{workflowStatus.demonstrationLabel}</strong>
+            <span>{workflowStatus.youCamApi}</span>
+            <span>Playback makes zero new provider requests.</span>
+          </div>
+        ) : null}
+
         <label className="upload-field">
           <span>Approved garment</span>
           <select
@@ -443,7 +456,7 @@ export function ConsumerTryOnPreflight() {
                 <p>
                   {job.apiUnitsConsumed > 0
                     ? `Generated with YouCam · Requests used: ${job.apiUnitsConsumed}`
-                    : "Preview generated for this demonstration"}
+                    : "previously completed controlled demonstration · playback makes zero new provider requests"}
                 </p>
                 <Link className="inline-link" href="/admin-review/">
                   View the retailer results dashboard →

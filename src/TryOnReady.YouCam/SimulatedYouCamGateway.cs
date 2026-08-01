@@ -49,14 +49,14 @@ internal sealed class SimulatedYouCamGateway(
             resultContent);
 
         logger.LogInformation(
-            "Virtual try-on job {JobId} entered deterministic YouCam simulation.",
+            "Virtual try-on job {JobId} selected the stored controlled demonstration replay. No provider request was made.",
             request.JobId);
 
         return Task.FromResult(
             new VirtualTryOnSubmission(
                 VirtualTryOnSubmissionStatus.Accepted,
                 providerReference,
-                "YouCam accepted the private try-on request.",
+                "Stored replay selected. Playback makes zero new provider requests.",
                 ConsumesApiUnits: false));
     }
 
@@ -69,7 +69,7 @@ internal sealed class SimulatedYouCamGateway(
             results.TryGetValue(providerReference, out var result)
                 ? new VirtualTryOnProgress(
                     VirtualTryOnProgressStatus.Succeeded,
-                    "YouCam finished the private try-on.",
+                    "The previously completed controlled demonstration is ready. Playback made zero new provider requests.",
                     ProviderErrorCode: null,
                     result)
                 : new VirtualTryOnProgress(

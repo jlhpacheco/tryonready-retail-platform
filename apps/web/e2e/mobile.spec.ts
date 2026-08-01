@@ -6,7 +6,7 @@ test("landing and sign-in remain usable on a phone viewport", async ({
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: /Virtual try-on that a small boutique can actually run/i,
+      name: "Virtual try-on, built for the shop floor.",
     }),
   ).toBeVisible();
 

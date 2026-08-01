@@ -31,7 +31,10 @@ ENV ASPNETCORE_URLS=http://0.0.0.0:8080 \
     PrivateStorage__RootPath=/data/private
 WORKDIR /app
 COPY --from=api-build /app/publish ./
+COPY samples/synthetic/replay/controlled-youcam-ai-clothes-v3-marisol-moonlight.jpg /app/replay/controlled-youcam-ai-clothes-v3-marisol-moonlight.jpg
+COPY deployment/entrypoint.sh /app/entrypoint.sh
 RUN mkdir -p /data/private
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod 0755 /app/entrypoint.sh
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "TryOnReady.Api.dll"]
-
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["serve"]

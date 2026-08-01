@@ -172,6 +172,20 @@ export default function Home() {
             work.
           </strong>
         </div>
+        <figure className="people-story-team">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/demo/luna-and-thread-team.png"
+            alt="Three fictional adult members of the Luna and Thread boutique team"
+            width="1672"
+            height="943"
+          />
+          <figcaption>
+            Synthetic boutique team — Elena Rivera centered, with one fictional
+            adult family member and one fictional adult close friend. Guest
+            shopper Marisol Lopez is not pictured and has no likeness overlap.
+          </figcaption>
+        </figure>
       </section>
 
       <section className="workflow-section" id="workflow">

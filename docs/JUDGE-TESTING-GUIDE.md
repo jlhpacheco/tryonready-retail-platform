@@ -1,5 +1,13 @@
 # TryOnReady Judge and Small-Business Guide
 
+> **Deployed judge mode:** The Fly deployment uses a provenance-locked stored
+> result from a previously completed controlled YouCam AI Clothes v3 / Apparel
+> Virtual Try-On demonstration. Playback makes zero new provider requests and
+> consumes zero new API units. Live YouCam credentials are intentionally not
+> configured. Elena Rivera is the fictional retailer; Marisol Lopez is a
+> separate fictional guest shopper with a different image and no likeness
+> overlap.
+
 ## Judge narrative pack
 
 - [Market validation](MARKET-VALIDATION.md)
