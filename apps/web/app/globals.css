@@ -681,6 +681,414 @@ h1 {
   color: var(--chocolate);
 }
 
+.button-dark-outline {
+  border-color: rgba(255, 255, 255, 0.46);
+  background: transparent;
+  color: var(--white);
+}
+
+.button-dark-outline:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pilot-environment,
+.pilot-hero,
+.pilot-plan,
+.pilot-evidence,
+.pilot-guardrails,
+.pilot-cadence,
+.pilot-closing {
+  width: min(100% - 2rem, 88rem);
+  margin-inline: auto;
+}
+
+.pilot-environment {
+  display: grid;
+  margin-top: 2rem;
+  padding: 1.1rem 1.25rem;
+  gap: 0.25rem;
+  border: 1px solid #a9bba0;
+  background: #f0f6ed;
+  color: #315d38;
+}
+
+.pilot-environment strong {
+  font-size: 0.92rem;
+}
+
+.pilot-environment span {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.pilot-hero {
+  display: grid;
+  min-height: 48rem;
+  padding-block: clamp(4.5rem, 8vw, 8rem);
+  align-items: center;
+  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: minmax(0, 1.15fr) minmax(22rem, 0.85fr);
+}
+
+.pilot-hero-copy {
+  max-width: 52rem;
+}
+
+.pilot-hero h1 {
+  max-width: none;
+  font-size: clamp(4.3rem, 8vw, 7.5rem);
+}
+
+.pilot-declaration {
+  max-width: 47rem;
+  margin: 1.6rem 0 0;
+  padding-left: 1.25rem;
+  border-left: 5px solid var(--clay-dark);
+  font-size: clamp(1.3rem, 2.3vw, 1.8rem);
+  font-weight: 760;
+  line-height: 1.34;
+}
+
+.pilot-intro {
+  max-width: 45rem;
+  margin: 1.6rem 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.pilot-actions {
+  display: flex;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.pilot-commitment {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--white);
+  box-shadow: 0 28px 75px rgba(0, 0, 0, 0.16);
+}
+
+.pilot-commitment header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.17);
+}
+
+.pilot-commitment header p {
+  margin: 0 0 0.3rem;
+  color: #f0b7a4;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.pilot-commitment header strong {
+  font-size: 1.35rem;
+}
+
+.pilot-commitment dl {
+  display: grid;
+  margin: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pilot-commitment dl div {
+  min-height: 8.4rem;
+  padding: 1.35rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pilot-commitment dl div:nth-child(2n) {
+  border-right: 0;
+}
+
+.pilot-commitment dt {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.pilot-commitment dd {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.55rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.pilot-commitment footer {
+  display: flex;
+  padding: 1.35rem 1.5rem;
+  align-items: flex-start;
+  gap: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pilot-commitment footer > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--white);
+  font-weight: 900;
+}
+
+.pilot-commitment footer p {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.pilot-commitment footer strong {
+  display: block;
+  color: var(--white);
+  font-size: 0.96rem;
+}
+
+.pilot-plan,
+.pilot-evidence,
+.pilot-guardrails,
+.pilot-cadence {
+  padding-block: clamp(5rem, 9vw, 8rem);
+  border-top: 1px solid var(--line);
+}
+
+.pilot-section-heading {
+  display: grid;
+  margin-bottom: 3.5rem;
+  align-items: end;
+  gap: 1.2rem 4rem;
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.pilot-section-heading .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.pilot-section-heading h2,
+.pilot-evidence h2,
+.pilot-guardrails h2,
+.pilot-cadence h2,
+.pilot-closing h2 {
+  margin: 0;
+  font-size: clamp(2.8rem, 5.5vw, 5.4rem);
+  font-weight: 790;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.pilot-section-heading > p:last-child,
+.pilot-evidence-copy > p:last-child,
+.pilot-guardrails > div > p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+}
+
+.pilot-phases {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-block: 1px solid var(--line);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.pilot-phases li {
+  min-height: 25rem;
+  padding: clamp(1.6rem, 4vw, 3rem);
+}
+
+.pilot-phases li + li {
+  border-left: 1px solid var(--line);
+}
+
+.pilot-phase-number {
+  color: var(--clay-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.pilot-phase-timing {
+  margin: 3.7rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pilot-phases h3 {
+  margin: 0.6rem 0 1rem;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  letter-spacing: -0.04em;
+}
+
+.pilot-phases li > p:last-child {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pilot-evidence {
+  display: grid;
+  align-items: start;
+  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+}
+
+.pilot-evidence-copy {
+  position: sticky;
+  top: 9rem;
+}
+
+.pilot-evidence h2 {
+  max-width: 10ch;
+}
+
+.pilot-evidence-copy > p:last-child {
+  max-width: 35rem;
+  margin-top: 1.5rem;
+}
+
+.pilot-measures {
+  display: grid;
+  margin: 0;
+  border-top: 1px solid var(--line);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pilot-measures div {
+  min-height: 10.5rem;
+  padding: 1.7rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.pilot-measures div:nth-child(2n) {
+  border-right: 0;
+}
+
+.pilot-measures dt {
+  font-size: 1.15rem;
+  font-weight: 820;
+}
+
+.pilot-measures dd {
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pilot-guardrails {
+  display: grid;
+  padding-inline: clamp(1.8rem, 6vw, 6rem);
+  background: var(--paper-deep);
+  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+}
+
+.pilot-guardrails h2 {
+  max-width: 11ch;
+}
+
+.pilot-guardrails > div > p:last-child {
+  max-width: 34rem;
+  margin-top: 1.5rem;
+}
+
+.pilot-guardrails ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pilot-guardrails li {
+  display: flex;
+  min-height: 4.8rem;
+  padding-block: 1rem;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid #cfcfcb;
+  font-size: 1rem;
+  font-weight: 720;
+}
+
+.pilot-guardrails li > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--white);
+  font-weight: 900;
+}
+
+.pilot-cadence {
+  display: grid;
+  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: 0.75fr 1.25fr;
+}
+
+.pilot-cadence h2 {
+  max-width: 9ch;
+}
+
+.pilot-cadence-list {
+  border-top: 1px solid var(--line);
+}
+
+.pilot-cadence-list p {
+  display: grid;
+  min-height: 6.4rem;
+  margin: 0;
+  padding: 1.3rem 0;
+  align-items: center;
+  gap: 1.2rem;
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: 0.7fr 1.3fr;
+}
+
+.pilot-cadence-list strong {
+  font-size: 1.05rem;
+}
+
+.pilot-cadence-list span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.pilot-closing {
+  margin-bottom: 6rem;
+  padding: clamp(3rem, 7vw, 6.5rem);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.pilot-closing .eyebrow {
+  color: #f0b7a4;
+}
+
+.pilot-closing h2 {
+  max-width: 13ch;
+}
+
+.pilot-closing > p:not(.eyebrow) {
+  max-width: 48rem;
+  color: rgba(255, 255, 255, 0.73);
+  font-size: 1.05rem;
+}
+
 .site-footer {
   display: flex;
   min-height: 12rem;
@@ -1590,8 +1998,18 @@ h1 {
   .admin-grid,
   .consumer-shell,
   .dashboard-panel,
-  .sign-in-shell {
+  .sign-in-shell,
+  .pilot-environment,
+  .pilot-hero,
+  .pilot-section-heading,
+  .pilot-evidence,
+  .pilot-guardrails,
+  .pilot-cadence {
     grid-template-columns: 1fr;
+  }
+
+  .pilot-evidence-copy {
+    position: static;
   }
 
   .workflow-grid {
@@ -1622,7 +2040,13 @@ h1 {
   .workflow-section,
   .privacy-section,
   .closing-section,
-  .placeholder-shell {
+  .placeholder-shell,
+  .pilot-hero,
+  .pilot-plan,
+  .pilot-evidence,
+  .pilot-guardrails,
+  .pilot-cadence,
+  .pilot-closing {
     width: min(100% - 1.25rem, 75rem);
   }
 
@@ -1646,6 +2070,10 @@ h1 {
   }
 
   .hero-actions {
+    display: grid;
+  }
+
+  .pilot-actions {
     display: grid;
   }
 
@@ -1685,7 +2113,32 @@ h1 {
   .image-details,
   .review-facts,
   .dashboard-grid,
-  .role-picker {
+  .role-picker,
+  .pilot-phases,
+  .pilot-measures,
+  .pilot-commitment dl {
+    grid-template-columns: 1fr;
+  }
+
+  .pilot-phases li {
+    min-height: auto;
+  }
+
+  .pilot-phases li + li {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .pilot-phase-timing {
+    margin-top: 2rem;
+  }
+
+  .pilot-measures div,
+  .pilot-commitment dl div {
+    border-right: 0;
+  }
+
+  .pilot-cadence-list p {
     grid-template-columns: 1fr;
   }
 

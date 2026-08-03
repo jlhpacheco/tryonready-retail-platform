@@ -15,6 +15,16 @@ test("landing and sign-in remain usable on a phone viewport", async ({
   );
   expect(hasHorizontalOverflow).toBe(false);
 
+  await page.goto("/future-pilot/");
+  await expect(
+    page.getByRole("heading", { name: "The pilot is next." }),
+  ).toBeVisible();
+  await expect(page.getByText("10–25", { exact: true })).toBeVisible();
+  const pilotHasHorizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth + 1,
+  );
+  expect(pilotHasHorizontalOverflow).toBe(false);
+
   await page.goto("/sign-in/");
   await expect(
     page.getByRole("heading", {

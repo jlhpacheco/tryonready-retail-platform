@@ -77,6 +77,30 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     expect(protectedQueue.status()).toBe(401);
   });
 
+  test("presents the future pilot as an executable commitment", async ({ page }) => {
+    await page.goto("/future-pilot/");
+    await expect(
+      page.getByRole("heading", { name: "The pilot is next." }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Regardless of the hackathon result/i),
+    ).toBeVisible();
+    await expect(page.getByText("8–12 weeks", { exact: true })).toBeVisible();
+    await expect(page.getByText("10–25", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Prepare. Run. Measure. Decide." }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Growth never outranks the safeguards." }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Retailers and administrators cannot access shopper photographs."),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Virtual try-on, built for the shop floor."),
+    ).toHaveCount(0);
+  });
+
   test("completes retailer, administrator, and guest try-on flow", async ({
     page,
     request,

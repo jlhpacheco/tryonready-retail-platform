@@ -26,6 +26,7 @@ const navigation = [
   { href: "/product-readiness", label: "Product Readiness" },
   { href: "/admin-review", label: "Admin Review" },
   { href: "/consumer-try-on", label: "Consumer Try-On" },
+  { href: "/future-pilot", label: "Future Pilot" },
 ];
 
 export default function RootLayout({

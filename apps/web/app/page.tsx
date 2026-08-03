@@ -247,9 +247,14 @@ export default function Home() {
           Conversion and return improvements remain hypotheses for a real
           boutique pilot.
         </p>
-        <Link className="button button-light" href="/sign-in/">
-          Start the guided demo
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-light" href="/future-pilot/">
+            See the future pilot plan
+          </Link>
+          <Link className="button button-dark-outline" href="/sign-in/">
+            Start the guided demo
+          </Link>
+        </div>
       </section>
     </>
   );
