@@ -1565,6 +1565,209 @@ h1 {
   font-weight: 700;
 }
 
+.admin-summary-shell {
+  width: min(100% - 2rem, 88rem);
+  padding-block: clamp(2.75rem, 4vw, 4rem);
+}
+
+.admin-summary-heading h1 {
+  max-width: none;
+  margin-bottom: 0;
+  font-size: clamp(2.4rem, 3.4vw, 3.9rem);
+  line-height: 1;
+}
+
+.admin-summary-heading > p:last-child {
+  max-width: 63rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.admin-summary-board {
+  display: grid;
+  overflow: hidden;
+  margin-top: 2.25rem;
+  border: 1px solid var(--line);
+  background: var(--white);
+  box-shadow: 0 22px 55px rgba(72, 42, 30, 0.09);
+  grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
+}
+
+.admin-summary-activity,
+.admin-summary-controls {
+  padding: clamp(1.5rem, 3.5vw, 2.6rem);
+}
+
+.admin-summary-activity {
+  border-right: 1px solid var(--line);
+}
+
+.admin-summary-activity h2,
+.admin-summary-controls h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+  letter-spacing: -0.035em;
+}
+
+.admin-summary-board .admin-summary-metrics {
+  display: grid;
+  margin-top: 1.35rem;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-summary-board .admin-summary-metrics div {
+  display: flex;
+  min-height: 8.5rem;
+  padding: 1.25rem 1.35rem;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--paper-deep);
+}
+
+.admin-summary-board .admin-summary-metrics dt {
+  max-width: none;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 820;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.admin-summary-board .admin-summary-metrics dd {
+  margin: 0.8rem 0 0;
+  color: #276c3b;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 820;
+  letter-spacing: -0.045em;
+}
+
+.admin-summary-controls ul {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-summary-controls li {
+  display: grid;
+  min-height: 5.8rem;
+  padding-block: 1rem;
+  align-items: start;
+  gap: 0.9rem;
+  border-top: 1px solid var(--line);
+  grid-template-columns: 1.8rem 1fr;
+}
+
+.admin-summary-controls li > span {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  margin-top: 0.1rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #0d7837;
+  color: var(--white);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.admin-summary-controls li p {
+  margin: 0;
+}
+
+.admin-summary-controls li strong,
+.admin-summary-controls li small {
+  display: block;
+}
+
+.admin-summary-controls li strong {
+  font-size: 1rem;
+}
+
+.admin-summary-controls li small {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.admin-control-status {
+  display: flex;
+  margin: 0.3rem 0 0;
+  padding: 0.9rem 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  border: 1px solid #b9cfb4;
+  background: #edf6e9;
+  color: #315d38;
+  font-size: 0.78rem;
+}
+
+.admin-control-status span {
+  color: #4d7654;
+}
+
+.admin-decision-area {
+  margin-top: clamp(5rem, 9vw, 8rem);
+  padding-top: clamp(4rem, 7vw, 6rem);
+  border-top: 1px solid var(--line);
+}
+
+.admin-decision-heading {
+  display: grid;
+  align-items: end;
+  gap: 1rem 4rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+}
+
+.admin-decision-heading .eyebrow {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.admin-decision-heading h2 {
+  max-width: 13ch;
+  margin: 0;
+  font-size: clamp(3rem, 5.5vw, 5.7rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.admin-decision-heading > p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.admin-single-review-grid {
+  margin-top: 3rem;
+}
+
+.admin-single-review-grid .admin-panel {
+  min-width: 0;
+}
+
+.admin-single-review-grid .panel-heading h3 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  letter-spacing: -0.04em;
+}
+
+.admin-single-review-grid .review-card-heading h4 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.admin-summary-footnote {
+  margin: 4rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-align: right;
+}
+
 .admin-grid {
   display: grid;
   margin-top: 2.5rem;
@@ -2061,6 +2264,10 @@ h1 {
     width: min(100% - 1.25rem, 75rem);
   }
 
+  .admin-summary-shell {
+    width: min(100% - 1.25rem, 88rem);
+  }
+
   .hero {
     padding-block: 3.5rem 4.5rem;
   }
@@ -2117,6 +2324,20 @@ h1 {
   .pilot-phases,
   .pilot-measures,
   .pilot-commitment dl {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-summary-board,
+  .admin-decision-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-summary-activity {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .admin-summary-board .admin-summary-metrics {
     grid-template-columns: 1fr;
   }
 

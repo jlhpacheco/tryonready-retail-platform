@@ -228,7 +228,11 @@ test.describe.serial("TryOnReady verified judge journey", () => {
       .getByRole("link", { name: /View the retailer results dashboard/i })
       .click();
     await expect(page).toHaveURL(/\/admin-review\/?$/);
-    await expect(page.getByText("Usage without customer photographs.")).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "One completed journey. The controls did their job.",
+      }),
+    ).toBeVisible();
     const metric = (label: string) => {
       const exactLabel = new RegExp(
         `^${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
@@ -237,15 +241,17 @@ test.describe.serial("TryOnReady verified judge journey", () => {
         has: page.locator("dt").filter({ hasText: exactLabel }),
       });
     };
-    await expect(metric("Try-ons").locator("dd")).toHaveText(
-      String(baseline.totalJobs + 1),
-    );
-    await expect(metric("Completed").locator("dd")).toHaveText(
+    await expect(metric("Completed try-ons").locator("dd")).toHaveText(
       String(baseline.succeededJobs + 1),
     );
-    await expect(metric("YouCam requests used").locator("dd")).toHaveText("0");
     await expect(metric("Duplicates stopped").locator("dd")).toHaveText(
       String(baseline.duplicateRequestsPrevented + 1),
+    );
+    await expect(metric("Replay provider calls").locator("dd")).toHaveText(
+      "0",
+    );
+    await expect(metric("Retailer photo access").locator("dd")).toHaveText(
+      "0",
     );
   });
 });

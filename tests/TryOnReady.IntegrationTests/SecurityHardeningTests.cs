@@ -80,6 +80,8 @@ public sealed class SecurityHardeningTests
         for (var attempt = 0; attempt < 12; attempt++)
         {
             using var form = new MultipartFormDataContent();
+            form.Add(new StringContent("not-a-product-id"), "productId");
+            form.Add(new StringContent("true"), "consentAccepted");
             using var request = new HttpRequestMessage(
                 HttpMethod.Post,
                 "/api/try-on-jobs")
@@ -92,6 +94,10 @@ public sealed class SecurityHardeningTests
         }
 
         using var limitedForm = new MultipartFormDataContent();
+        limitedForm.Add(
+            new StringContent("not-a-product-id"),
+            "productId");
+        limitedForm.Add(new StringContent("true"), "consentAccepted");
         using var limitedRequest = new HttpRequestMessage(
             HttpMethod.Post,
             "/api/try-on-jobs")

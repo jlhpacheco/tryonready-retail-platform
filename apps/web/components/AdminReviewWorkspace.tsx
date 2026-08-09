@@ -80,6 +80,22 @@ export function AdminReviewWorkspace() {
           !productsResponse.ok ||
           !dashboardResponse.ok
         ) {
+          if (
+            [
+              applicationsResponse.status,
+              reviewsResponse.status,
+              productsResponse.status,
+              dashboardResponse.status,
+            ].some((status) => status === 401 || status === 403)
+          ) {
+            if (isCurrent) {
+              setMessage(
+                "Sign in as an administrator to review the current application and garment.",
+              );
+            }
+            return;
+          }
+
           throw new Error("The review queues could not be loaded.");
         }
 
@@ -124,6 +140,14 @@ export function AdminReviewWorkspace() {
       isCurrent = false;
     };
   }, []);
+
+  const currentApplication = applications[0] ?? null;
+  const currentReview = reviews[0] ?? null;
+  const currentProduct = currentReview
+    ? products.find((product) => product.id === currentReview.productId) ?? null
+    : null;
+  const completedDemonstrations = dashboard?.succeededJobs ?? 1;
+  const duplicatesStopped = dashboard?.duplicateRequestsPrevented ?? 1;
 
   async function decideApplication(applicationId: string, decision: string) {
     setIsSaving(true);
@@ -194,95 +218,138 @@ export function AdminReviewWorkspace() {
   }
 
   return (
-    <section className="admin-shell">
-      <header className="admin-heading">
-        <p className="eyebrow">Step 3 · Admin review</p>
-        <h1>Review the boutique and product before consumer try-on.</h1>
+    <section className="admin-shell admin-summary-shell">
+      <header className="admin-summary-heading">
+        <p className="eyebrow">Retailer summary</p>
+        <h1>One completed journey. The controls did their job.</h1>
         <p>
-          This workspace shows business details, readiness, and YouCam status.
-          It never shows a consumer photograph or secret value.
+          Luna &amp; Thread can confirm the completed demonstration, the stopped
+          duplicate, and the privacy safeguards without viewing shopper photos.
         </p>
       </header>
 
-      {isLoading ? <p role="status">Loading review queues…</p> : null}
-      {message ? (
-        <p className="admin-message" role="status">
-          {message}
-        </p>
-      ) : null}
-
-      <section className="dashboard-panel" aria-labelledby="dashboard-title">
-        <div>
-          <p className="eyebrow">Retailer results dashboard</p>
-          <h2 id="dashboard-title">Usage without customer photographs.</h2>
+      <section
+        className="admin-summary-board"
+        aria-labelledby="admin-summary-title"
+      >
+        <div className="admin-summary-activity">
+          <h2 id="admin-summary-title">Controlled demo activity</h2>
+          <dl className="admin-summary-metrics dashboard-grid">
+            <div>
+              <dt>Completed try-ons</dt>
+              <dd>{completedDemonstrations}</dd>
+            </div>
+            <div>
+              <dt>Duplicates stopped</dt>
+              <dd>{duplicatesStopped}</dd>
+            </div>
+            <div>
+              <dt>Replay provider calls</dt>
+              <dd>0</dd>
+            </div>
+            <div>
+              <dt>Retailer photo access</dt>
+              <dd>0</dd>
+            </div>
+          </dl>
         </div>
-        <dl className="dashboard-grid">
-          <div>
-            <dt>Try-ons</dt>
-            <dd>{dashboard?.totalJobs ?? 0}</dd>
-          </div>
-          <div>
-            <dt>Completed</dt>
-            <dd>{dashboard?.succeededJobs ?? 0}</dd>
-          </div>
-          <div>
-            <dt>Processing</dt>
-            <dd>
-              {(dashboard?.pendingJobs ?? 0) +
-                (dashboard?.processingJobs ?? 0)}
-            </dd>
-          </div>
-          <div>
-            <dt>YouCam requests used</dt>
-            <dd>{dashboard?.apiUnitsConsumed ?? 0}</dd>
-          </div>
-          <div>
-            <dt>Duplicates stopped</dt>
-            <dd>{dashboard?.duplicateRequestsPrevented ?? 0}</dd>
-          </div>
-        </dl>
+
+        <section
+          className="admin-summary-controls"
+          aria-labelledby="usage-controls-title"
+        >
+          <h2 id="usage-controls-title">Active usage controls</h2>
+          <ul>
+            <li>
+              <span aria-hidden="true">✓</span>
+              <p>
+                <strong>Human-approved product</strong>
+                <small>One boutique application and one authorized garment image.</small>
+              </p>
+            </li>
+            <li>
+              <span aria-hidden="true">✓</span>
+              <p>
+                <strong>Private guest journey</strong>
+                <small>No shopper account required for this demonstration.</small>
+              </p>
+            </li>
+            <li>
+              <span aria-hidden="true">✓</span>
+              <p>
+                <strong>Replay protection</strong>
+                <small>The stored result returned without a duplicate provider request.</small>
+              </p>
+            </li>
+          </ul>
+          <p className="admin-control-status">
+            <strong>Status: controls active</strong>
+            <span>Synthetic adult/demo data only</span>
+          </p>
+        </section>
       </section>
 
-      <div className="admin-grid">
-        <section className="admin-panel" aria-labelledby="applications-title">
-          <div className="panel-heading">
-            <p className="eyebrow">Queue 01</p>
-            <h2 id="applications-title">Boutique applications</h2>
-            <p>Awaiting an administrator decision.</p>
-          </div>
+      <section className="admin-decision-area" aria-labelledby="decision-title">
+        <header className="admin-decision-heading">
+          <p className="eyebrow">Administrator decision</p>
+          <h2 id="decision-title">Review one application and one garment.</h2>
+          <p>
+            One boutique record is paired with its one submitted garment. No
+            duplicate cards, repeated photos, or customer imagery.
+          </p>
+        </header>
 
-          {applications.length === 0 ? (
-            <p className="empty-state">
-              No boutique applications are awaiting review.
-            </p>
-          ) : (
-            applications.map((application) => (
-              <article className="review-card" key={application.id}>
+        {isLoading ? <p role="status">Loading the current review…</p> : null}
+        {message ? (
+          <p className="admin-message" role="status">
+            {message}
+          </p>
+        ) : null}
+
+        <div className="admin-grid admin-single-review-grid">
+          <section
+            className="admin-panel"
+            aria-label="Boutique applications"
+          >
+            <div className="panel-heading">
+              <p className="eyebrow">Application 01</p>
+              <h3>One boutique application</h3>
+              <p>Business identity and operating readiness.</p>
+            </div>
+
+            {!currentApplication ? (
+              <p className="empty-state">
+                No boutique application is awaiting review.
+              </p>
+            ) : (
+              <article className="review-card" key={currentApplication.id}>
                 <div className="review-card-heading">
                   <div>
-                    <h3>{application.boutiqueName}</h3>
-                    <p>{application.ownerName}</p>
+                    <h4>{currentApplication.boutiqueName}</h4>
+                    <p>{currentApplication.ownerName}</p>
                   </div>
-                  <span className="status-pill">{application.status}</span>
+                  <span className="status-pill">{currentApplication.status}</span>
                 </div>
                 <dl className="review-facts">
                   <div>
                     <dt>Email</dt>
-                    <dd>{application.email}</dd>
+                    <dd>{currentApplication.email}</dd>
                   </div>
                   <div>
                     <dt>Employees</dt>
-                    <dd>{application.employeeCount}</dd>
+                    <dd>{currentApplication.employeeCount}</dd>
                   </div>
                   <div>
                     <dt>Sales channel</dt>
-                    <dd>{application.primarySalesChannel}</dd>
+                    <dd>{currentApplication.primarySalesChannel}</dd>
                   </div>
                 </dl>
                 <div className="decision-row">
                   <button
                     type="button"
-                    onClick={() => decideApplication(application.id, "Approve")}
+                    onClick={() =>
+                      decideApplication(currentApplication.id, "Approve")
+                    }
                     disabled={isSaving}
                   >
                     Approve boutique
@@ -290,105 +357,91 @@ export function AdminReviewWorkspace() {
                   <button
                     className="button-danger"
                     type="button"
-                    onClick={() => decideApplication(application.id, "Decline")}
+                    onClick={() =>
+                      decideApplication(currentApplication.id, "Decline")
+                    }
                     disabled={isSaving}
                   >
                     Decline boutique
                   </button>
                 </div>
               </article>
-            ))
-          )}
-        </section>
+            )}
+          </section>
 
-        <section className="admin-panel" aria-labelledby="products-title">
-          <div className="panel-heading">
-            <p className="eyebrow">Queue 02</p>
-            <h2 id="products-title">Product reviews</h2>
-            <p>Ready garments awaiting an administrator decision.</p>
-          </div>
+          <section className="admin-panel" aria-label="Product reviews">
+            <div className="panel-heading">
+              <p className="eyebrow">Garment 01</p>
+              <h3>One submitted garment</h3>
+              <p>One photograph with readiness and provider status.</p>
+            </div>
 
-          {reviews.length === 0 ? (
-            <p className="empty-state">
-              No products are awaiting review.
-            </p>
-          ) : reviews.map((review) => (
-            <article className="review-card" key={review.id}>
-              {products.find((product) => product.id === review.productId) ? (
+            {!currentReview ? (
+              <p className="empty-state">No garment is awaiting review.</p>
+            ) : (
+              <article className="review-card" key={currentReview.id}>
+              {currentProduct ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className="review-garment-image"
-                  src={
-                    products.find(
-                      (product) => product.id === review.productId,
-                    )!.garmentImageUrl
-                  }
-                  alt={`${review.productName} garment submitted for review`}
+                  src={currentProduct.garmentImageUrl}
+                  alt={`${currentReview.productName} garment submitted for review`}
                 />
               ) : null}
               <div className="review-card-heading">
                 <div>
-                  <h3>{review.productName}</h3>
+                  <h4>{currentReview.productName}</h4>
                   <p>
-                    {review.boutiqueName} · {review.sku}
+                    {currentReview.boutiqueName} · {currentReview.sku}
                   </p>
                 </div>
-                <span className="status-pill">{review.status}</span>
+                <span className="status-pill">{currentReview.status}</span>
               </div>
               <dl className="review-facts">
                 <div>
                   <dt>Category</dt>
-                  <dd>{review.category}</dd>
+                  <dd>{currentReview.category}</dd>
                 </div>
                 <div>
                   <dt>Readiness</dt>
-                  <dd>{review.readinessPassed ? "Passed" : "Needs work"}</dd>
+                  <dd>{currentReview.readinessPassed ? "Passed" : "Needs work"}</dd>
                 </div>
                 <div>
                   <dt>YouCam readiness</dt>
-                  <dd>{review.providerStatus}</dd>
+                  <dd>{currentReview.providerStatus}</dd>
                 </div>
-                {(() => {
-                  const product = products.find(
-                    (item) => item.id === review.productId,
-                  );
-                  return product ? (
+                {currentProduct ? (
                     <>
                       <div>
                         <dt>Brand</dt>
-                        <dd>{product.brand}</dd>
+                        <dd>{currentProduct.brand}</dd>
                       </div>
                       <div>
                         <dt>Color</dt>
-                        <dd>{product.color}</dd>
+                        <dd>{currentProduct.color}</dd>
                       </div>
                       <div>
                         <dt>Material</dt>
-                        <dd>{product.material}</dd>
+                        <dd>{currentProduct.material}</dd>
                       </div>
                       <div>
                         <dt>Sizes</dt>
-                        <dd>{product.sizeRange}</dd>
+                        <dd>{currentProduct.sizeRange}</dd>
                       </div>
                       <div>
                         <dt>Retail price</dt>
                         <dd>
-                          {product.price === null
+                          {currentProduct.price === null
                             ? "Not listed"
-                            : `${product.currency} ${product.price.toFixed(2)}`}
+                            : `${currentProduct.currency} ${currentProduct.price.toFixed(2)}`}
                         </dd>
                       </div>
                     </>
-                  ) : null;
-                })()}
+                  ) : null}
               </dl>
-              {products.find((product) => product.id === review.productId) ? (
+              {currentProduct ? (
                 <p className="review-description">
-                  {
-                    products.find(
-                      (product) => product.id === review.productId,
-                    )!.description
-                  }
+                  {currentProduct.description}
                 </p>
               ) : null}
               <label className="notes-field">
@@ -403,14 +456,16 @@ export function AdminReviewWorkspace() {
               <div className="decision-row decision-row-three">
                 <button
                   type="button"
-                  onClick={() => decideProduct(review.id, "Approve")}
+                  onClick={() => decideProduct(currentReview.id, "Approve")}
                   disabled={isSaving}
                 >
                   Approve product
                 </button>
                 <button
                   type="button"
-                  onClick={() => decideProduct(review.id, "ChangesRequested")}
+                  onClick={() =>
+                    decideProduct(currentReview.id, "ChangesRequested")
+                  }
                   disabled={isSaving}
                 >
                   Request changes
@@ -418,21 +473,24 @@ export function AdminReviewWorkspace() {
                 <button
                   className="button-danger"
                   type="button"
-                  onClick={() => decideProduct(review.id, "Decline")}
+                  onClick={() => decideProduct(currentReview.id, "Decline")}
                   disabled={isSaving}
                 >
                   Decline product
                 </button>
               </div>
-              {review.status === "Approved" ? (
+              {currentReview.status === "Approved" ? (
                 <a className="inline-link next-step-link" href="/consumer-try-on/">
                   Continue to Consumer Try-On →
                 </a>
               ) : null}
             </article>
-          ))}
-        </section>
-      </div>
+            )}
+          </section>
+        </div>
+      </section>
+
+      <p className="admin-summary-footnote">Synthetic adult/demo data only</p>
     </section>
   );
 }

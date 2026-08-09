@@ -210,7 +210,9 @@ test("records the guarded TryOnReady judge journey", async ({ page }) => {
     .click();
   await expect(page).toHaveURL(/\/admin-review\/?$/);
   await expect(
-    page.getByText("Usage without customer photographs."),
+    page.getByRole("heading", {
+      name: "One completed journey. The controls did their job.",
+    }),
   ).toBeVisible();
   await holdProof(page, 2);
 });
