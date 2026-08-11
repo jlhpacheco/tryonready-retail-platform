@@ -180,3 +180,21 @@ In a clean browser:
 7. Repeat unchanged input and confirm duplicate reuse.
 8. Confirm the retailer dashboard contains aggregate counts and no shopper
    photos.
+
+## Judging-window live provider schedule
+
+Jose Luis approved this one-time live-provider window for the official judging
+period. Windows Task Scheduler on the authorized deployment workstation runs
+`tools/operations/Set-TryOnReadyProviderMode.ps1` at these Eastern times:
+
+- enable live YouCam: August 18, 2026 at 11:59 a.m. Eastern
+- disable live YouCam and restore stored replay: August 31, 2026 at 11:46 a.m.
+
+The workstation is in Pacific time, so the registered local triggers are
+August 18 at 8:59 a.m. and August 31 at 8:46 a.m. The tasks wake the workstation
+when possible, run missed starts when the workstation becomes available, retry
+up to three times, and verify `/api/status` after Fly restarts the application.
+
+The YouCam key is stored only in Fly encrypted secrets and local .NET User
+Secrets. It is never written to this script, repository, GitHub Actions, or
+task arguments. The operations script targets only `tryonready-demo`.

@@ -1,6 +1,6 @@
 # TryOnReady Devpost Submission Draft
 
-Status: **Draft for Jose Luis Pacheco's review. Not submitted.**
+Status: **Approved by Jose Luis Pacheco; final submission access checks are in progress.**
 
 Devpost project: <https://devpost.com/software/tryonready>
 
@@ -9,8 +9,8 @@ Hackathon: <https://youcam-api.devpost.com/>
 Official deadline: August 17, 2026 at 11:45 a.m. ET / 8:45 a.m. PT.
 Internal target: August 16, 2026 at 5:00 p.m. PT.
 
-Do not finalize the submission until Jose Luis approves this wording and the
-approved public video URL is available. Do not place passwords, provider
+Jose Luis approved the submission and the public video on August 10, 2026.
+Do not place passwords, provider
 credentials, signed URLs, or real customer data on Devpost.
 
 ## Project metadata
@@ -26,7 +26,7 @@ credentials, signed URLs, or real customer data on Devpost.
 - **Repository:** <https://github.com/jlhpacheco/tryonready-retail-platform>
 - **Repository access:** Private; share with `contact_event@PerfectCorp.com`
 - **YouTube publishing account:** <https://www.youtube.com/@jlhpacheco>
-- **Video:** `[DIRECT APPROVED PUBLIC YOUTUBE VIDEO URL REQUIRED]`
+- **Video:** <https://youtu.be/hKEY5tmI7G0>
 - **Optional social-media post:** Leave blank.
 
 ## Inspiration
@@ -228,11 +228,11 @@ The private Devpost testing instructions must include:
 
 ## Submission gate
 
-- [ ] Jose Luis approves the complete project-page wording.
+- [x] Jose Luis approves the complete project-page wording.
 - [x] Submitter name, type, country, and project start date are confirmed.
 - [ ] Final screenshots and thumbnail are selected and approved.
-- [ ] Carlos's final video passes the strictly-under-3:00 gate.
-- [ ] The approved final video is publicly accessible on YouTube or Vimeo.
+- [x] Carlos's final video passes the strictly-under-3:00 gate (2:38).
+- [x] The approved final video is publicly accessible on YouTube.
 - [ ] Private judge credentials are entered only in testing instructions.
 - [ ] The private repository is shared with `contact_event@PerfectCorp.com`.
 - [ ] Every public link works in a signed-out browser.
