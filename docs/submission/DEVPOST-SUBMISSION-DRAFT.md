@@ -1,6 +1,10 @@
 # TryOnReady Devpost Submission Draft
 
-Status: **Approved by Jose Luis Pacheco; final submission access checks are in progress.**
+Status: **Submitted to the YouCam API Skin AI & Apparel VTO Hackathon.**
+
+Submission receipt: `1133079`  
+Submitted: August 10, 2026 at 11:18:38 p.m. Eastern  
+Live entry: <https://devpost.com/software/tryonready>
 
 Devpost project: <https://devpost.com/software/tryonready>
 
@@ -233,8 +237,8 @@ The private Devpost testing instructions must include:
 - [ ] Final screenshots and thumbnail are selected and approved.
 - [x] Carlos's final video passes the strictly-under-3:00 gate (2:38).
 - [x] The approved final video is publicly accessible on YouTube.
-- [ ] Private judge credentials are entered only in testing instructions.
-- [ ] The private repository is shared with `contact_event@PerfectCorp.com`.
-- [ ] Every public link works in a signed-out browser.
-- [ ] Project is submitted before the official deadline.
-- [ ] Submission receipt/state is verified after submission.
+- [x] Private judge credentials were delivered only in the private organizer guide.
+- [x] A private-repository invitation was sent to `contact_event@PerfectCorp.com`; organizer acceptance is pending.
+- [x] The public website and YouTube video are accessible.
+- [x] Project was submitted before the official deadline.
+- [x] Submission receipt/state was verified after submission.
