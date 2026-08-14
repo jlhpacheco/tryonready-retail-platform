@@ -170,7 +170,7 @@ Returns and purchase conversion require retailer transaction data and a credible
 | Derived fact | 32,124 of those firms had fewer than 20 employees, or 93.2%. |
 | Sourced fact | U.S. e-commerce represented 16.9% of total retail sales in Q1 2026. |
 | Sourced fact | YouCam uses units, authenticated multi-step tasks, polling, rate limits, and timed asset access. |
-| Repository fact | TryOnReady’s complete workflow has passed automated simulation tests; no controlled live YouCam completion is recorded as of July 26, 2026. |
+| Repository fact | TryOnReady’s complete workflow passed automated simulation tests; on July 28, 2026, one controlled `YouCamLive` task reached `Succeeded` and recorded one API unit. The public judge path replays that provenance-locked result without a new provider request. |
 | Inference | A managed operating layer is more usable for a small boutique than a raw API integration. |
 | Assumption | 5%–15% of the under-20-employee firm proxy could meet early qualification criteria. |
 | Assumption | A 10–25-boutique pilot is sufficient to test workflow usability and directional engagement, not causal commercial impact. |
@@ -211,4 +211,3 @@ Returns and purchase conversion require retailer transaction data and a credible
 | [YouCam API rate limits](https://docs.perfectcorp.com/develop/rate_limit) | Last updated July 2026 | 250 requests per 300 seconds per IP/token and backoff guidance | YouCam API | Operational limit, not a demand metric |
 | [YouCam API file retention](https://docs.perfectcorp.com/develop/file_retention_period) | Last updated May 2026 | 30-day provider retention; 2-hour result download URL | YouCam API | TryOnReady’s own shorter local policy is separate |
 | [Devpost official rules](https://youcam-api.devpost.com/rules) | Accessed July 26, 2026 | Working YouCam integration, retail value, video, repository, access, and equal-weight judging criteria | YouCam API Skin AI & Apparel VTO Hackathon | Rules may be amended; recheck before submission |
-

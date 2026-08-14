@@ -89,7 +89,10 @@ queried, migrated, or modified.
 - A local status check confirmed provider mode `YouCamLive`,
   `LiveYouCamIntegration=true`, and `ApiKeyExposedToBrowser=false`.
 - The key value was not printed or copied into the repository.
-- No controlled live provider task had been submitted at this checkpoint.
+- No controlled live provider task had been submitted at this July 26
+  checkpoint. This historical state was superseded on July 28, 2026, when one
+  controlled `YouCamLive` task reached `Succeeded` and recorded one API unit;
+  see `docs/CONTROLLED-REPLAY-PROVENANCE.md`.
 
 ## July 26, 2026 — verified browser journey
 

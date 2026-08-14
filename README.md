@@ -86,11 +86,13 @@ With `TryOnReady.Api` running:
 - `POST http://localhost:5090/api/try-on-jobs` — private multipart consumer try-on submission
 - `GET http://localhost:5090/api/dashboard` — aggregate results and API-unit totals
 
-Repository defaults keep live YouCam mode disabled. A newly rotated credential
-has been verified in local Visual Studio User Secrets without printing its
-value; no controlled live task has been submitted yet. Simulation mode follows
-the same application workflow without spending an API unit. No provider
-credential is accepted from browser code.
+Repository defaults keep live YouCam mode disabled. A rotated credential was
+verified in local Visual Studio User Secrets without printing its value. On
+July 28, 2026, one controlled YouCam AI Clothes v3 task completed in
+`YouCamLive` mode with terminal state `Succeeded` and one recorded API unit.
+The public Fly judge path replays that provenance-locked result and makes no new
+provider request. Simulation mode follows the same application workflow without
+spending an API unit. No provider credential is accepted from browser code.
 
 The Playwright smoke suite starts an isolated Release-mode API at
 `http://127.0.0.1:5091` and runs the complete retailer, administrator, and guest

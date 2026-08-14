@@ -79,11 +79,16 @@ The retailer sees aggregate try-on counts, outcomes, duplicates, and units. Ligh
 - Synthetic Luna & Thread catalog and fictional customer assets.
 - Release build with zero warnings/errors, 10 .NET tests, and Playwright continuous-flow tests in simulation and isolated PostgreSQL modes, according to `docs/IMPLEMENTATION-LOG.md`.
 
+### Verified release evidence
+
+- One controlled YouCam AI Clothes v3 task reached `Succeeded` in `YouCamLive`
+  mode on July 28, 2026.
+- The TryOnReady record shows one API unit for that controlled task.
+- The public Fly.io judge URL passed the smoke flow and replays the verified
+  result without making a new provider request.
+
 ### Pending and therefore not claimable as complete
 
-- One controlled live YouCam Apparel VTO task reaching success.
-- Reconciliation of that live task with the TryOnReady unit record.
-- A public Fly.io judge URL passing the smoke flow.
 - Real retailer or shopper pilot outcomes.
 - Measured willingness to pay.
 - Measured conversion, return, or purchase-interest impact.
@@ -150,7 +155,7 @@ reads the supporting copy.
 | “Enterprise VTO for every boutique” | “A lean operating layer designed for small clothing retailers” |
 | “Anonymous” | “No customer account required; image processing still occurs with consent” |
 | “Images are immediately deleted everywhere” | “TryOnReady deletes the consumer source after terminal processing and follows documented retention; provider retention is governed separately” |
-| “Live YouCam integration proven” | Use only after a controlled live task succeeds and is recorded |
+| “Live YouCam integration proven” | State precisely: one controlled task succeeded July 28, 2026; judge playback uses the provenance-locked replay and does not make a new provider request |
 
 ## Why the Retailer Pays
 
@@ -181,7 +186,7 @@ TryOnReady does not need to beat Google or Walmart as a shopping destination. It
 2. Moonlight Blazer image passing readiness before approval.
 3. Admin publishing checkpoint.
 4. Guest consent and “API key in browser: Never.”
-5. A controlled live `YouCamLive` result—not simulation—in the final submission video.
+5. The recorded July 28 `YouCamLive` result and its exact replay provenance in the final submission video.
 6. An immediate unchanged retry showing “Duplicate request prevented.”
 7. Dashboard counts and units without shopper photographs.
 8. A concise pilot invitation with the exact outcomes to validate.

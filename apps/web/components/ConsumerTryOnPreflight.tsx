@@ -296,7 +296,12 @@ export function ConsumerTryOnPreflight() {
     <section className="consumer-shell">
       <div className="consumer-product">
         <p className="eyebrow">Step 4 · Guest customer</p>
-        {selectedProduct ? (
+        {isLoading ? (
+          <div className="readiness-result">
+            <p className="result-label">Loading judge catalog</p>
+            <h2>Loading the approved garment…</h2>
+          </div>
+        ) : selectedProduct ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -311,10 +316,10 @@ export function ConsumerTryOnPreflight() {
           </>
         ) : (
           <div className="readiness-result readiness-needs-work">
-            <p className="result-label">Approval required</p>
-            <h2>No approved garment is available yet.</h2>
-            <Link className="inline-link" href="/admin-review/">
-              Go to Admin Review →
+            <p className="result-label">Judge session required</p>
+            <h2>Sign in as Guest Customer to load the approved garment.</h2>
+            <Link className="inline-link" href="/sign-in/">
+              Open Judge Sign In →
             </Link>
           </div>
         )}

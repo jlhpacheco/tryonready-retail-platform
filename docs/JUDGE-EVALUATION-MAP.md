@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-- **Baseline viability depends on visible live proof.** The rules require a working application integrating at least one YouCam Fashion API. The repository contains a non-trivial Apparel VTO adapter and a fully simulation-tested workflow, but the final submission should not rely on code inspection alone. Complete one controlled live task and show the provider mode, result, and unit record.
+- **Baseline viability is supported by recorded live proof.** The rules require a working application integrating at least one YouCam Fashion API. TryOnReady completed one controlled YouCam AI Clothes v3 task on July 28, 2026; the recorded evidence shows `YouCamLive`, terminal state `Succeeded`, the generated result, and one API unit. The public judge path replays that provenance-locked result without making a new provider request.
 - **The strongest scoring story is the operating layer.** Every judging criterion is equally weighted. The demo should connect the same five controls—readiness, approval, consent/privacy, duplicate/unit control, and aggregate reporting—to technological implementation, design, impact, and idea quality.
 - **The first minute must establish audience and novelty.** Say “three-person boutique,” show Luna & Thread, and explain that the YouCam result is the engine while TryOnReady makes it safe and operable for a small retailer.
 - **Do not spend video time on stack recitation.** Show working evidence. Put .NET, PostgreSQL, Next.js, private storage, and tests in on-screen proof or submission text.
@@ -24,13 +24,13 @@ The submission also requires a functional repository, text description, screensh
 
 | Requirement | Judge-visible proof | Repository proof | Current state | Submission action |
 |---|---|---|---|---|
-| Working application | Public URL or functioning demo | Full ASP.NET/Next.js workflow | Local simulation proven; public URL not evidenced | Deploy and smoke-test judge URL |
+| Working application | Public URL or functioning demo | Full ASP.NET/Next.js workflow | Public Fly judge URL deployed and smoke-tested | Keep the public URL available through judging |
 | At least one YouCam Fashion API | `Provider mode: YouCamLive`, generated result, unit count | `YouCamApparelVirtualTryOnGateway.cs` uses AI Clothes v3 endpoints; controlled result provenance is documented | Completed controlled YouCamLive task: `Succeeded`, 1 API unit | Preserve the verified result and exact replay provenance |
 | Clear retail value | Luna & Thread workflow and five controls | Landing page, forms, dashboard, docs | Strong | Lead with “small boutique can actually run” |
 | Repository and instructions | Public source-available repo, README, judge guide | Public `main`, narrow judging license, README, and judge guide | Complete and anonymously reachable | Keep public links and instructions synchronized |
 | End-to-end video | Application → garment → approval → consent → YouCam result → dashboard | Playwright covers the same path; public video shows the working experience | Complete: public 2:38 YouTube video | Keep the approved public video URL available through judging |
 
-If the live task or public URL is still pending, the project is not submission-ready even though the code and simulated workflow are credible.
+The public replay is deliberately labeled as a previously completed controlled demonstration. It is not represented as a new provider request performed during judge playback.
 
 ## Criterion 1: Technological Implementation
 
@@ -197,37 +197,36 @@ Do not expose the YouCam key, signed upload URL, provider result URL, private st
 |---|---|---|
 | Full small-retailer workflow implemented | Verified | Repository and automated test log |
 | Live YouCam adapter implemented | Verified in code | Adapter code |
-| One live YouCam result completed | **Not verified** | Recorded successful task, result, unit reconciliation |
+| One live YouCam result completed | **Verified July 28, 2026** | `YouCamLive`, `Succeeded`, generated result, and one recorded API unit; see replay provenance |
 | API key remains server-side | Verified by repository status/test evidence | Browser status and secret scan |
 | Duplicate submission does not create second task | Verified in simulation | Test and live controlled retry if safe |
 | Retailer never sees shopper photos | Verified in workflow/tests | Dashboard and access checks |
 | Build/test suite passes | Previously verified | Fresh run before submission |
-| Public judge URL works | **Not verified** | Fly URL plus smoke run |
+| Public judge URL works | **Verified** | Fly URL plus smoke run |
 | Returns decrease | Unproven hypothesis | Pilot plus transaction/return comparison |
 | Conversion increases | Unproven hypothesis | Pilot plus purchase data and comparison |
 | Retailers will pay | Unproven hypothesis | Interviews and paid/committed pilot |
 
 ## Highest-Risk Gaps, in Order
 
-1. **Controlled live YouCam success** — highest Stage One risk.
-2. **Public judge access** — judges may rely only on video/text if the app is unavailable.
-3. **Fresh end-to-end verification on the deployed build** — deployment can differ from local.
-4. **First-screen value clarity** — the operating-layer novelty must be explicit.
-5. **Live-safe video capture** — no secret or signed URL can appear.
-6. **Claim discipline** — simulation, live proof, and future pilot outcomes must remain distinct.
+1. **Public availability through judging** — keep the Fly URL and replay path healthy.
+2. **First-screen value clarity** — the operating-layer novelty must be explicit.
+3. **Claim discipline** — distinguish the July 28 live task from replay playback and future pilot outcomes.
+4. **Secret-safe evidence** — no key, signed URL, or private storage path may appear.
+5. **Pilot validation** — willingness to pay and commercial outcomes remain unproven.
 
 ## Final Submission Checklist
 
-- [ ] One controlled live AI Clothes v3 task completed with authorized synthetic assets.
-- [ ] Live task and unit evidence recorded without secrets or provider URLs.
-- [ ] Fly.io URL deployed and the same smoke path passed.
+- [x] One controlled live AI Clothes v3 task completed with authorized synthetic assets.
+- [x] Live task and unit evidence recorded without secrets or provider URLs.
+- [x] Fly.io URL deployed and the same smoke path passed.
 - [x] Public source repository and judging license are anonymously accessible; organizer notified.
-- [ ] README links to market validation, novelty, judge map, video narrative, pilot metrics, and judge guide.
-- [ ] Screenshots use only fictional/synthetic assets.
-- [ ] 1–3 minute video is publicly visible and names the YouCam Apparel VTO API.
-- [ ] Video shows the app functioning on its intended device.
-- [ ] Submission text explains what was significantly updated during the submission period.
-- [ ] No third-party copyrighted music or unauthorized marks appear.
+- [x] README links to market validation, novelty, judge map, video narrative, pilot metrics, and judge guide.
+- [x] Screenshots use only fictional/synthetic assets.
+- [x] 1–3 minute video is publicly visible and names the YouCam Apparel VTO API.
+- [x] Video shows the app functioning on its intended device.
+- [x] Submission text explains what was significantly updated during the submission period.
+- [x] No third-party copyrighted music or unauthorized marks appear.
 - [ ] Judge credentials and instructions remain valid through the judging period.
 - [ ] Build, tests, lint, typecheck, Playwright, and secret scan rerun against the final commit.
 - [ ] Working/pending claims in `docs/IMPLEMENTATION-LOG.md` are current.
