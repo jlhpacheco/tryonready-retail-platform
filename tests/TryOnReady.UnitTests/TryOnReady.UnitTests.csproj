@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\TryOnReady.Application\TryOnReady.Application.csproj" />
     <ProjectReference Include="..\..\src\TryOnReady.Domain\TryOnReady.Domain.csproj" />
+    <ProjectReference Include="..\..\src\TryOnReady.YouCam\TryOnReady.YouCam.csproj" />
   </ItemGroup>
 
 </Project>

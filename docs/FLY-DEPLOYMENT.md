@@ -47,19 +47,28 @@ Committed non-secret configuration is in `fly.toml`. Runtime secrets are:
 ConnectionStrings__TryOnReady
 DemoAccess__Retailer__Password
 DemoAccess__Administrator__Password
+YouCam__ApiKey
+YouCam__Enabled
+YouCam__SimulationEnabled
+YouCam__AutomaticLiveWindowEnabled
+YouCam__LiveWindowStartsAtUtc
+YouCam__LiveWindowEndsAtUtc
 ```
 
-Never print or commit their values. Live YouCam is disabled. Production uses
-the provenance-locked stored result documented in
+Never print or commit secret values. Production uses the provenance-locked
+stored result documented in
 `CONTROLLED-REPLAY-PROVENANCE.md`:
 
 ```text
-YouCam__Enabled=false
-YouCam__SimulationEnabled=true
+outside configured window -> StoredReplay
+inside configured window  -> YouCamLive
 ```
 
-The UI labels it a **previously completed controlled demonstration** and states
-that playback makes zero new provider requests.
+The deployed application evaluates its UTC live window for every new try-on
+submission. Outside that window, the UI labels the result a **previously
+completed controlled demonstration** and states that playback makes zero new
+provider requests. The server-side API key remains encrypted by Fly and never
+reaches the browser.
 
 The hosted site is synthetic-only. `fly.toml` enables SHA-256 allowlisting for
 the repository's Moonlight Blazer and Marisol fixtures. Real customer media is
@@ -170,8 +179,9 @@ instructions. Share the private repository with
 In a clean browser:
 
 1. Confirm `/`, `/health`, and `/api/status` over HTTPS.
-2. Confirm `/api/status` reports `StoredReplay`, PostgreSQL, the full YouCam API
-   name, and zero new provider requests.
+2. Confirm `/api/status` reports the expected time-based mode, PostgreSQL, the
+   full YouCam API name, and the configured UTC window. Outside the window it
+   must report `StoredReplay`; inside the window it must report `YouCamLive`.
 3. Complete retailer application and garment readiness with repository
    synthetic assets.
 4. Complete administrator approval.
@@ -183,18 +193,23 @@ In a clean browser:
 
 ## Judging-window live provider schedule
 
-Jose Luis approved this one-time live-provider window for the official judging
-period. Windows Task Scheduler on the authorized deployment workstation runs
-`tools/operations/Set-TryOnReadyProviderMode.ps1` at these Eastern times:
+Jose Luis approved a 12-hour safety margin on each side of the official judging
+period. The Fly-hosted ASP.NET application enforces the window from its UTC
+clock; it does not depend on a workstation, Windows Task Scheduler, GitHub
+Actions, or a separate cron service.
 
-- enable live YouCam: August 18, 2026 at 11:59 a.m. Eastern
-- disable live YouCam and restore stored replay: August 31, 2026 at 11:46 a.m.
+| Boundary | Eastern time | UTC |
+| --- | --- | --- |
+| Live window opens | August 18, 2026 at 12:00 a.m. | `2026-08-18T04:00:00Z` |
+| Judging starts | August 18, 2026 at 12:00 p.m. | `2026-08-18T16:00:00Z` |
+| Judging ends | August 31, 2026 at 11:45 a.m. | `2026-08-31T15:45:00Z` |
+| Live window closes | August 31, 2026 at 11:45 p.m. | `2026-09-01T03:45:00Z` |
 
-The workstation is in Pacific time, so the registered local triggers are
-August 18 at 8:59 a.m. and August 31 at 8:46 a.m. The tasks wake the workstation
-when possible, run missed starts when the workstation becomes available, retry
-up to three times, and verify `/api/status` after Fly restarts the application.
+The window is start-inclusive and end-exclusive. Each new submission selects
+live YouCam only while the Fly instance clock is inside that interval. Stored
+replay remains available before and after it without consuming provider units.
 
-The YouCam key is stored only in Fly encrypted secrets and local .NET User
-Secrets. It is never written to this script, repository, GitHub Actions, or
-task arguments. The operations script targets only `tryonready-demo`.
+`tools/operations/Set-TryOnReadyProviderMode.ps1` remains an emergency manual
+fallback only; it is not the production scheduler. The YouCam key is stored
+only in Fly encrypted secrets and local .NET User Secrets. It is never written
+to the repository, GitHub Actions, task arguments, or browser code.

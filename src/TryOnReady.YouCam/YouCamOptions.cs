@@ -8,6 +8,12 @@ public sealed class YouCamOptions
 
     public bool SimulationEnabled { get; init; }
 
+    public bool AutomaticLiveWindowEnabled { get; init; }
+
+    public DateTimeOffset? LiveWindowStartsAtUtc { get; init; }
+
+    public DateTimeOffset? LiveWindowEndsAtUtc { get; init; }
+
     public string SimulationResultPath { get; init; } = string.Empty;
 
     public Uri BaseUrl { get; init; } = new("https://yce-api-01.makeupar.com");

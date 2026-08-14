@@ -55,24 +55,29 @@ internal static class WorkflowEndpoints
                 "/api/status",
                 (
                     IOptions<YouCamOptions> youCam,
+                    YouCamProviderModeResolver providerMode,
                     IOptions<PersistenceOptions> persistence,
                     IOptions<HostedDemoOptions> hostedDemo) =>
                     TypedResults.Ok(
                         new
                         {
                             phase = "vertical-slice",
-                            providerMode = youCam.Value.Enabled
-                                ? "YouCamLive"
-                                : youCam.Value.SimulationEnabled
-                                    ? "StoredReplay"
-                                    : "Disabled",
-                            liveYouCamIntegration = youCam.Value.Enabled,
+                            providerMode = providerMode.Current.ToString(),
+                            liveYouCamIntegration = providerMode.Current
+                                == YouCamProviderMode.YouCamLive,
                             youCamApi =
                                 "YouCam AI Clothes v3 / Apparel Virtual Try-On",
-                            demonstrationLabel = youCam.Value.SimulationEnabled
+                            demonstrationLabel = providerMode.Current
+                                == YouCamProviderMode.StoredReplay
                                 ? "previously completed controlled demonstration"
                                 : null,
                             playbackMakesNewProviderRequests = false,
+                            automaticLiveWindowEnabled =
+                                youCam.Value.AutomaticLiveWindowEnabled,
+                            liveWindowStartsAtUtc =
+                                youCam.Value.LiveWindowStartsAtUtc,
+                            liveWindowEndsAtUtc =
+                                youCam.Value.LiveWindowEndsAtUtc,
                             syntheticOnlyJudgeDemo =
                                 hostedDemo.Value.SyntheticOnly,
                             persistence = persistence.Value.Provider,
