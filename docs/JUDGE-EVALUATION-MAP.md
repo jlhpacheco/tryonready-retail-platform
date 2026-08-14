@@ -25,10 +25,10 @@ The submission also requires a functional repository, text description, screensh
 | Requirement | Judge-visible proof | Repository proof | Current state | Submission action |
 |---|---|---|---|---|
 | Working application | Public URL or functioning demo | Full ASP.NET/Next.js workflow | Local simulation proven; public URL not evidenced | Deploy and smoke-test judge URL |
-| At least one YouCam Fashion API | `Provider mode: YouCamLive`, generated result, unit count | `YouCamApparelVirtualTryOnGateway.cs` uses AI Clothes v3 endpoints | Adapter exists; no successful live task recorded | Complete exactly one controlled live task |
+| At least one YouCam Fashion API | `Provider mode: YouCamLive`, generated result, unit count | `YouCamApparelVirtualTryOnGateway.cs` uses AI Clothes v3 endpoints; controlled result provenance is documented | Completed controlled YouCamLive task: `Succeeded`, 1 API unit | Preserve the verified result and exact replay provenance |
 | Clear retail value | Luna & Thread workflow and five controls | Landing page, forms, dashboard, docs | Strong | Lead with “small boutique can actually run” |
-| Repository and instructions | Shared private repo, README, judge guide | Existing README and judge Word/PDF guide | Strong locally | Share private repo with `contact_event@PerfectCorp.com` |
-| End-to-end video | Application → garment → approval → consent → live result → dashboard | Playwright covers same path in simulation | Script pending | Record 1–3 minute public video |
+| Repository and instructions | Public source-available repo, README, judge guide | Public `main`, narrow judging license, README, and judge guide | Complete and anonymously reachable | Keep public links and instructions synchronized |
+| End-to-end video | Application → garment → approval → consent → YouCam result → dashboard | Playwright covers the same path; public video shows the working experience | Complete: public 2:38 YouTube video | Keep the approved public video URL available through judging |
 
 If the live task or public URL is still pending, the project is not submission-ready even though the code and simulated workflow are credible.
 
@@ -221,7 +221,7 @@ Do not expose the YouCam key, signed upload URL, provider result URL, private st
 - [ ] One controlled live AI Clothes v3 task completed with authorized synthetic assets.
 - [ ] Live task and unit evidence recorded without secrets or provider URLs.
 - [ ] Fly.io URL deployed and the same smoke path passed.
-- [ ] Private repository shared with `contact_event@PerfectCorp.com`.
+- [x] Public source repository and judging license are anonymously accessible; organizer notified.
 - [ ] README links to market validation, novelty, judge map, video narrative, pilot metrics, and judge guide.
 - [ ] Screenshots use only fictional/synthetic assets.
 - [ ] 1–3 minute video is publicly visible and names the YouCam Apparel VTO API.
@@ -231,4 +231,3 @@ Do not expose the YouCam key, signed upload URL, provider result URL, private st
 - [ ] Judge credentials and instructions remain valid through the judging period.
 - [ ] Build, tests, lint, typecheck, Playwright, and secret scan rerun against the final commit.
 - [ ] Working/pending claims in `docs/IMPLEMENTATION-LOG.md` are current.
-

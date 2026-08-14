@@ -57,8 +57,8 @@ logs.
    API unit on one controlled live test.
 7. Deploy the combined ASP.NET/Next.js container to Fly.io, configure secrets,
    and give judges a working URL.
-8. Prepare the 1–3 minute video, testing instructions, and private-repository
-   access.
+8. Maintain the public 1–3 minute video, private judge testing instructions,
+   and public source-repository access.
 
 SaaS subscriptions, billing, multi-tenant production administration, and
 decorative pages are explicitly below this work in priority.
