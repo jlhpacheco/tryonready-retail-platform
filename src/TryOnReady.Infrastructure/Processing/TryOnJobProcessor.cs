@@ -72,7 +72,7 @@ internal sealed class TryOnJobProcessor(
             await MarkFailedAsync(
                 snapshot.Id,
                 "provider_poll_timeout",
-                "YouCam did not complete within the bounded polling window.",
+                "YouCam is taking longer than expected. Please try again in a moment.",
                 cancellationToken);
             return true;
         }
@@ -82,7 +82,7 @@ internal sealed class TryOnJobProcessor(
             await MarkFailedAsync(
                 snapshot.Id,
                 "submission_interrupted",
-                "The secure provider submission was interrupted. Start a new try-on to avoid a duplicate API charge.",
+                "The YouCam run was interrupted. Start a new try-on only if you want to try again.",
                 cancellationToken);
         }
         else if (snapshot.Status == "Pending")
@@ -104,7 +104,7 @@ internal sealed class TryOnJobProcessor(
         await UpdateStatusAsync(
             snapshot.Id,
             "Submitting",
-            "Uploading private assets to YouCam from the secure server.",
+            "Sending the approved photos to YouCam.",
             providerReference: null,
             providerErrorCode: null,
             consumeUnits: false,
@@ -121,7 +121,7 @@ internal sealed class TryOnJobProcessor(
             await MarkFailedAsync(
                 snapshot.Id,
                 "private_asset_missing",
-                "A private input asset was unavailable.",
+                "One of the approved photos could not be found. Please try again.",
                 cancellationToken);
             return;
         }
@@ -173,7 +173,7 @@ internal sealed class TryOnJobProcessor(
             await MarkFailedAsync(
                 snapshot.Id,
                 "provider_reference_missing",
-                "The provider task reference was unavailable.",
+                "The YouCam try-on could not be located. Please try again.",
                 cancellationToken);
             return;
         }
@@ -330,7 +330,7 @@ internal sealed class TryOnJobProcessor(
         {
             logger.LogWarning(
                 exception,
-                "Provider resources for a completed task could not be deleted immediately.");
+                "YouCam cleanup for a completed task could not finish immediately.");
         }
     }
 }

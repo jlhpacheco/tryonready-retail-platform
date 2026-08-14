@@ -24,6 +24,7 @@ public sealed class TryOnReadyDbContext(
             .HasMaxLength(80);
         applications.Property(application => application.Website).HasMaxLength(500);
         applications.Property(application => application.Status).HasMaxLength(32);
+        applications.HasIndex(application => application.Email).IsUnique();
         applications.HasIndex(application => application.SubmittedAtUtc);
 
         var products = modelBuilder.Entity<ProductEntity>();
@@ -73,4 +74,3 @@ public sealed class TryOnReadyDbContext(
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
-

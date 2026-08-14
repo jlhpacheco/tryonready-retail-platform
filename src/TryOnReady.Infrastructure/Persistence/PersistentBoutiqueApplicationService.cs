@@ -30,12 +30,25 @@ internal sealed class PersistentBoutiqueApplicationService(
         string? website,
         CancellationToken cancellationToken)
     {
+        var normalizedEmail = NormalizeEmail(email);
+
+        await using var dbContext =
+            await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var existing = await dbContext.BoutiqueApplications
+            .SingleOrDefaultAsync(
+                application => application.Email == normalizedEmail,
+                cancellationToken);
+        if (existing is not null)
+        {
+            return Map(existing);
+        }
+
         var entity = new BoutiqueApplicationEntity
         {
             Id = Guid.NewGuid(),
             BoutiqueName = boutiqueName.Trim(),
             OwnerName = ownerName.Trim(),
-            Email = email.Trim(),
+            Email = normalizedEmail,
             EmployeeCount = employeeCount,
             PrimarySalesChannel = primarySalesChannel.Trim(),
             Website = string.IsNullOrWhiteSpace(website) ? null : website.Trim(),
@@ -43,8 +56,6 @@ internal sealed class PersistentBoutiqueApplicationService(
             SubmittedAtUtc = DateTimeOffset.UtcNow,
         };
 
-        await using var dbContext =
-            await dbContextFactory.CreateDbContextAsync(cancellationToken);
         dbContext.BoutiqueApplications.Add(entity);
         await dbContext.SaveChangesAsync(cancellationToken);
         return Map(entity);
@@ -85,4 +96,7 @@ internal sealed class PersistentBoutiqueApplicationService(
             application.Status,
             application.SubmittedAtUtc,
             application.DecidedAtUtc);
+
+    private static string NormalizeEmail(string email) =>
+        email.Trim().ToLowerInvariant();
 }

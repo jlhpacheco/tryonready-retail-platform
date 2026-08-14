@@ -1,24 +1,36 @@
-app = "tryonready-jlhpacheco"
+app = "tryonready-demo"
 primary_region = "sjc"
 
 [build]
   dockerfile = "Dockerfile"
 
 [env]
+  ASPNETCORE_ENVIRONMENT = "Production"
   ASPNETCORE_URLS = "http://0.0.0.0:8080"
+  AllowedHosts = "*.fly.dev;*.internal;localhost;127.0.0.1;[::1]"
+  HostedDemo__AllowedGarmentImageSha256 = "8F02878034877B38CC1E9F8372BFD145819E6FFFF74F5E295709E3AF8F5FD907"
+  HostedDemo__AllowedPersonImageSha256 = "2E139397587FE1E624CFB6DD51CB89A55D601CCE72705428987D872842946182"
+  HostedDemo__SyntheticOnly = "true"
   Persistence__Provider = "Postgres"
   PrivateStorage__RootPath = "/data/private"
+  YouCam__Enabled = "false"
+  YouCam__SimulationEnabled = "true"
+  YouCam__SimulationResultPath = "/app/replay/controlled-youcam-ai-clothes-v3-marisol-moonlight.jpg"
 
 [[mounts]]
-  source = "tryonready_data"
+  source = "tryonready_demo_data"
   destination = "/data"
+
+[deploy]
+  release_command = "migrate"
+  strategy = "immediate"
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = "off"
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
 
   [[http_service.checks]]
     grace_period = "30s"
@@ -27,8 +39,15 @@ primary_region = "sjc"
     path = "/health"
     timeout = "5s"
 
+    [http_service.checks.headers]
+      Host = "tryonready-demo.fly.dev"
+      X-Forwarded-Proto = "https"
+
 [[vm]]
-  memory = "1gb"
+  memory = "512mb"
   cpu_kind = "shared"
   cpus = 1
 
+[[restart]]
+  policy = "on-failure"
+  retries = 10

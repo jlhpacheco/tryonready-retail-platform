@@ -4,11 +4,11 @@ import Link from "next/link";
 const workflow = [
   {
     number: "01",
-    href: "/boutique-application",
+    href: "/sign-in",
     title: "Boutique Application",
     description:
       "The retailer starts a guided application with prefilled demo data.",
-    action: "Start the demo",
+    action: "Choose the retailer role",
   },
   {
     number: "02",
@@ -41,11 +41,11 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Built for independent boutiques</p>
-          <h1>Virtual try-on that a small boutique can actually run.</h1>
+          <p className="eyebrow">Retail technology for independent boutiques</p>
+          <h1>Virtual try-on, built for the shop floor.</h1>
           <p className="hero-intro">
             Prepare and approve each garment once. Let shoppers try it
-            privately without an account. Control valid provider requests and
+            privately without an account. Control valid YouCam try-ons and
             learn which garments attract interest—without seeing customer
             photos.
           </p>
@@ -54,7 +54,7 @@ export default function Home() {
             boutique operate virtual try-on safely for every guest.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/boutique-application">
+            <Link className="button button-primary" href="/sign-in">
               Start the Luna &amp; Thread demo
             </Link>
             <a className="button button-secondary" href="#workflow">
@@ -70,9 +70,9 @@ export default function Home() {
           <header className="operations-header">
             <div>
               <p>Boutique operations proof</p>
-              <span>One completed live demo path</span>
+              <span>One completed guided demo path</span>
             </div>
-            <span className="operations-live">YouCamLive</span>
+            <span className="operations-live">YouCam-ready</span>
           </header>
 
           <div className="operations-product">
@@ -109,8 +109,8 @@ export default function Home() {
               <dd>1</dd>
             </div>
             <div>
-              <dt>API units used</dt>
-              <dd>1</dd>
+              <dt>Usage controls active</dt>
+              <dd>Yes</dd>
             </div>
             <div>
               <dt>Shopper photos in retailer view</dt>
@@ -126,7 +126,7 @@ export default function Home() {
           </div>
 
           <footer className="operations-footer">
-            <span>Server-side API key</span>
+            <span>Secret keys stay hidden</span>
             <strong>Retailer-safe aggregate signals</strong>
           </footer>
         </aside>
@@ -134,23 +134,64 @@ export default function Home() {
 
       <section className="trust-strip" aria-label="Product principles">
         <p>
+          <span className="trust-number">01</span>
           <strong>Ready before paid use</strong>
-          <span>Check the garment before a shopper request can use a provider unit.</span>
+          <span>Check the garment before a shopper can start a live try-on.</span>
         </p>
         <p>
+          <span className="trust-number">02</span>
           <strong>Private, no-account guests</strong>
           <span>Shoppers consent; retailers never receive their source or generated photos.</span>
         </p>
         <p>
+          <span className="trust-number">03</span>
           <strong>Controlled and measurable</strong>
-          <span>Stop unchanged duplicates and track completed work and API units.</span>
+          <span>Stop unchanged duplicates and track completed try-ons.</span>
         </p>
+      </section>
+
+      <section className="people-story" aria-labelledby="people-story-title">
+        <div className="people-story-heading">
+          <p className="eyebrow">Two people. One useful moment.</p>
+          <h2 id="people-story-title">
+            Elena runs the shop. Marisol wants to see the blazer.
+          </h2>
+        </div>
+        <div className="people-story-copy">
+          <p>
+            Elena Rivera has three employees, a physical boutique, and no
+            integration team. She prepares the Moonlight Blazer once and
+            decides when it is ready for shoppers.
+          </p>
+          <p>
+            Marisol Lopez visits as a guest. She sees the limits, gives
+            consent, and receives her private result without opening an account.
+          </p>
+          <strong>
+            Neither person needs to understand an API for the experience to
+            work.
+          </strong>
+        </div>
+        <figure className="people-story-team">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/demo/luna-and-thread-team.png"
+            alt="Three fictional adult members of the Luna and Thread boutique team"
+            width="1672"
+            height="943"
+          />
+          <figcaption>
+            Synthetic boutique team — Elena Rivera centered, with one fictional
+            adult family member and one fictional adult close friend. Guest
+            shopper Marisol Lopez is not pictured and has no likeness overlap.
+          </figcaption>
+        </figure>
       </section>
 
       <section className="workflow-section" id="workflow">
         <div className="section-heading">
-          <p className="eyebrow">The guided workflow</p>
-          <h2>One garment setup. One private guest journey.</h2>
+          <p className="eyebrow">The operating collection</p>
+          <h2>One garment. Four controlled steps.</h2>
           <p>
             Every screen explains the next action so a retailer, administrator,
             shopper, or judge can complete the journey without guessing.
@@ -182,7 +223,7 @@ export default function Home() {
               <li>Approved garment catalog details</li>
               <li>Aggregated try-on counts</li>
               <li>Processing success and failure totals</li>
-              <li>API units and stopped duplicates</li>
+              <li>Completed try-ons and stopped duplicates</li>
             </ul>
           </article>
           <article className="never-card">
@@ -202,12 +243,18 @@ export default function Home() {
         <h2>Run one garment safely before scaling the catalog.</h2>
         <p>
           TryOnReady measures reliable results, retailer effort, controlled
-          units, garment-interest actions, and deletion compliance. Conversion
-          and return improvements remain hypotheses for a real boutique pilot.
+          YouCam use, garment-interest actions, and deletion compliance.
+          Conversion and return improvements remain hypotheses for a real
+          boutique pilot.
         </p>
-        <Link className="button button-light" href="/boutique-application/">
-          Start the guided demo
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-light" href="/future-pilot/">
+            See the future pilot plan
+          </Link>
+          <Link className="button button-dark-outline" href="/sign-in/">
+            Start the guided demo
+          </Link>
+        </div>
       </section>
     </>
   );

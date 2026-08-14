@@ -3,7 +3,7 @@
 ## Original synthetic garment test assets
 
 The three PNG files in `samples/garments` were generated specifically for the
-private TryOnReady hackathon project using OpenAI image generation on July 25,
+TryOnReady hackathon project using OpenAI image generation on July 25,
 2026. They depict fictional, unbranded garments and contain no real people,
 customer data, or third-party logos.
 
@@ -17,8 +17,9 @@ brand, or third-party logo. Their hashes, dimensions, prompt summaries, and
 authorized demo purpose are recorded in
 `samples/synthetic/ASSET-METADATA.md`.
 
-These files may be used for the private hackathon repository, local automated
-tests, the judge demonstration, and controlled YouCam Apparel VTO validation.
+These files may be used for authorized TryOnReady hackathon judging, local
+automated tests, the judge demonstration, and controlled YouCam Apparel VTO
+validation under the repository's [judging license](LICENSE).
 They must not be represented as photographs of real people or real merchandise.
 
 TryOnReady depends on third-party frameworks and packages distributed under their own licenses. Their inclusion does not grant an open-source license to TryOnReady.

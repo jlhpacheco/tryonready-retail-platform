@@ -81,6 +81,7 @@ internal sealed class PersistentProductCatalogService(
         ArgumentNullException.ThrowIfNull(submission);
 
         var productId = Guid.NewGuid();
+        var normalizedSku = submission.Sku.Trim().ToUpperInvariant();
         var assessment = readinessService.Assess(
             new ProductImageMetadata(
                 productId,
@@ -114,6 +115,18 @@ internal sealed class PersistentProductCatalogService(
                 "A declined boutique application cannot add garments.");
         }
 
+        var duplicateProduct = await dbContext.Products
+            .AsNoTracking()
+            .AnyAsync(
+                product => product.BoutiqueApplicationId == application.Id
+                    && product.Sku == normalizedSku,
+                cancellationToken);
+        if (duplicateProduct)
+        {
+            throw new InvalidOperationException(
+                "This boutique already has a garment with that product number. Reuse the existing review item or enter a different SKU.");
+        }
+
         var stored = await assetStore.SaveAsync(
             new PrivateAssetUpload(
                 submission.FileName,
@@ -129,7 +142,7 @@ internal sealed class PersistentProductCatalogService(
             BoutiqueApplicationId = application.Id,
             BoutiqueApplication = application,
             Name = submission.Name.Trim(),
-            Sku = submission.Sku.Trim(),
+            Sku = normalizedSku,
             Category = submission.Category.Trim(),
             Brand = submission.Brand.Trim(),
             Color = submission.Color.Trim(),

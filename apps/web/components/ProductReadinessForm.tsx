@@ -190,6 +190,7 @@ export function ProductReadinessForm() {
     try {
       const response = await fetch("/api/products", {
         method: "POST",
+        headers: { "X-TryOnReady-Request": "judge-demo" },
         body: form,
       });
 
@@ -223,9 +224,9 @@ export function ProductReadinessForm() {
         <p className="eyebrow">Step 2 · Add a garment</p>
         <h1>Save the product and check its image.</h1>
         <p>
-          The secure server validates and stores the garment image before an
-          administrator reviews it. This prevents wasting a YouCam API unit on
-          an unusable file.
+          TryOnReady checks and stores the garment image before an
+          administrator reviews it. That keeps unsuitable files out of the
+          shopper experience.
         </p>
       </div>
 
@@ -409,8 +410,8 @@ export function ProductReadinessForm() {
           <p className="result-label">Image ready · Product saved</p>
           <h2>{result.name} is waiting for administrator approval.</h2>
           <p>
-            Product <strong>{result.sku}</strong> passed the server-side image
-            check. Status: <strong>{result.status}</strong>.
+            Product <strong>{result.sku}</strong> passed the image check.
+            Status: <strong>{result.status}</strong>.
           </p>
           <Link className="inline-link" href="/admin-review/">
             Continue to Admin Review →

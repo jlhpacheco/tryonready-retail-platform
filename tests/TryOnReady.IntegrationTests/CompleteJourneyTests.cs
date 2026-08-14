@@ -14,6 +14,9 @@ public sealed class CompleteJourneyTests : IClassFixture<TryOnReadyApiFactory>
     public CompleteJourneyTests(TryOnReadyApiFactory factory)
     {
         client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add(
+            "X-TryOnReady-Request",
+            "judge-demo");
     }
 
     [Fact]
@@ -140,6 +143,90 @@ public sealed class CompleteJourneyTests : IClassFixture<TryOnReadyApiFactory>
         Assert.Equal(0, dashboard.GetProperty("apiUnitsConsumed").GetInt32());
     }
 
+    [Fact]
+    public async Task DuplicateBoutiqueApplication_ReturnsExistingApplication()
+    {
+        await LoginAsync(
+            "retailer@tryonready.demo",
+            "PlaywrightRetailer!2026");
+
+        var email = $"elena+{Guid.NewGuid():N}@luna-thread.example.invalid";
+        var request = new
+        {
+            boutiqueName = "Luna & Thread",
+            ownerName = "Elena Rivera",
+            email,
+            employeeCount = 3,
+            primarySalesChannel = "Physical store",
+            website = (string?)null,
+            certifiesImageRights = true,
+        };
+
+        using var firstResponse = await client.PostAsJsonAsync(
+            "/api/boutique-applications",
+            request);
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        var firstId = await ReadIdAsync(firstResponse);
+
+        using var duplicateResponse = await client.PostAsJsonAsync(
+            "/api/boutique-applications",
+            request with { email = email.ToUpperInvariant() });
+        Assert.Equal(HttpStatusCode.OK, duplicateResponse.StatusCode);
+        Assert.Equal(firstId, await ReadIdAsync(duplicateResponse));
+
+        using var applicationsResponse = await client.GetAsync(
+            "/api/boutique-applications");
+        Assert.Equal(HttpStatusCode.OK, applicationsResponse.StatusCode);
+        using var applications = JsonDocument.Parse(
+            await applicationsResponse.Content.ReadAsStringAsync());
+        Assert.Equal(
+            1,
+            applications.RootElement.EnumerateArray().Count(
+                application => application.GetProperty("id").GetString() == firstId));
+    }
+
+    [Fact]
+    public async Task DuplicateGarmentSku_ReturnsValidationProblemBeforeSecondReviewItem()
+    {
+        await LoginAsync(
+            "retailer@tryonready.demo",
+            "PlaywrightRetailer!2026");
+
+        using var applicationResponse = await client.PostAsJsonAsync(
+            "/api/boutique-applications",
+            new
+            {
+                boutiqueName = "Luna & Thread",
+                ownerName = "Elena Rivera",
+                email = $"elena+{Guid.NewGuid():N}@luna-thread.example.invalid",
+                employeeCount = 3,
+                primarySalesChannel = "Physical store",
+                website = (string?)null,
+                certifiesImageRights = true,
+            });
+        Assert.Equal(HttpStatusCode.OK, applicationResponse.StatusCode);
+        var applicationId = await ReadIdAsync(applicationResponse);
+
+        var sku = $"SYN-BLZ-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
+        using var firstProductForm = await CreateProductFormAsync(applicationId, sku);
+        using var firstProductResponse = await client.PostAsync(
+            "/api/products",
+            firstProductForm);
+        Assert.Equal(HttpStatusCode.OK, firstProductResponse.StatusCode);
+
+        using var duplicateProductForm = await CreateProductFormAsync(
+            applicationId,
+            sku.ToLowerInvariant());
+        using var duplicateProductResponse = await client.PostAsync(
+            "/api/products",
+            duplicateProductForm);
+        Assert.Equal(HttpStatusCode.BadRequest, duplicateProductResponse.StatusCode);
+        var problem = await ReadJsonAsync(duplicateProductResponse);
+        Assert.Contains(
+            "already has a garment",
+            problem.GetProperty("errors").GetProperty("product")[0].GetString());
+    }
+
     private async Task LoginAsync(string username, string password)
     {
         using var response = await client.PostAsJsonAsync(
@@ -159,6 +246,33 @@ public sealed class CompleteJourneyTests : IClassFixture<TryOnReadyApiFactory>
         var content = new ByteArrayContent(image);
         content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
         return content;
+    }
+
+    private static async Task<MultipartFormDataContent> CreateProductFormAsync(
+        string applicationId,
+        string sku)
+    {
+        var image = await CreateSyntheticImageAsync();
+        var form = new MultipartFormDataContent();
+        Add(form, "boutiqueApplicationId", applicationId);
+        Add(form, "name", "Moonlight Blazer");
+        Add(form, "sku", sku);
+        Add(form, "category", "top");
+        Add(form, "brand", "Luna & Thread");
+        Add(form, "color", "Terracotta");
+        Add(form, "material", "Cotton blend");
+        Add(form, "sizeRange", "XS-XL");
+        Add(
+            form,
+            "description",
+            "A synthetic garment used for the verified integration journey.");
+        Add(form, "price", "89.00");
+        Add(form, "currency", "USD");
+        form.Add(
+            ImageContent(image),
+            "garmentImage",
+            "synthetic-garment.png");
+        return form;
     }
 
     private static async Task<byte[]> CreateSyntheticImageAsync()

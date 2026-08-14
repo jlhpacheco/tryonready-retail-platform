@@ -10,7 +10,7 @@ inventory.
 These files are authorized for:
 
 - local TryOnReady development and automated testing;
-- the private hackathon repository;
+- the public source-available hackathon repository under its judging license;
 - judge demonstrations and the submission video; and
 - controlled YouCam Apparel VTO requests using the hackathon API units.
 
@@ -18,6 +18,24 @@ They are not authorized for resale, identity claims, or representation as real
 retail merchandise. Do not replace them with a real customer photograph.
 
 ## Luna & Thread mini catalog
+
+### Luna & Thread boutique team
+
+- People: Elena Rivera centered, one fictional adult family member, and one
+  fictional adult close friend
+- File: `../../apps/web/public/demo/luna-and-thread-team.png`
+- MIME type: `image/png`
+- Dimensions: 1672 x 943 pixels
+- File size: 2,563,128 bytes
+- SHA-256: `c5a3ce8d70d83dc3d4606f80c750811dd72b2ce1f353807ee2c0af556466d762`
+- Setting: a fictional independent clothing boutique
+- Identity boundary: this depicts boutique staff; guest shopper Marisol Lopez
+  is not pictured and is a separate fictional person from boutique operator
+  Elena Rivera
+- Likeness boundary: Elena, Marisol, and every pictured boutique-team member
+  are visually distinct fictional adults with no intended likeness overlap
+- Permitted purpose: public TryOnReady homepage and judge demonstration
+- Added from the project owner-provided approved asset on 2026-08-01
 
 ### Moonlight Blazer
 
@@ -110,7 +128,22 @@ retail merchandise. Do not replace them with a real customer photograph.
 - Danielle Smith + Harbor Sage Blouse (`top`)
 - Marisol Lopez + Midnight Wrap Dress (`full_body`)
 
-The source images are input fixtures. A generated YouCam result is a separate
-temporary artifact and must not be committed to the repository. TryOnReady
-stores private source and result images outside the public web root and deletes
-them according to `docs/DATA-RETENTION.md`.
+## Controlled demonstration replay
+
+### Marisol Lopez + Moonlight Blazer result
+
+- File: `replay/controlled-youcam-ai-clothes-v3-marisol-moonlight.jpg`
+- MIME type: `image/jpeg`
+- File size: 177,101 bytes
+- SHA-256: `9dfd97d39ce7f7dc1033d452d11dcbfd3cc1bc62557d65e12093a8a7587ba6c2`
+- Provenance: previously completed controlled YouCam AI Clothes v3 / Apparel
+  Virtual Try-On demonstration on July 28, 2026
+- Runtime behavior: stored replay only; playback makes zero new provider
+  requests and consumes zero new API units
+- Permitted purpose: public judge demonstration and automated replay testing
+- Full lineage: `docs/CONTROLLED-REPLAY-PROVENANCE.md`
+
+Generated results normally remain private temporary artifacts and are deleted
+according to `docs/DATA-RETENTION.md`. This single provenance-locked synthetic
+result is the explicit judge-replay exception; it is packaged outside the
+public web root and returned only through the application result endpoint.

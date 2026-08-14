@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "demo:prerun": "playwright test --config=playwright.demo.config.ts",
+    "demo:master": "playwright test --config=playwright.demo.config.ts"
   },
   "dependencies": {
     "next": "16.2.12",

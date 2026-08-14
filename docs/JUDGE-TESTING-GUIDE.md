@@ -1,5 +1,13 @@
 # TryOnReady Judge and Small-Business Guide
 
+> **Deployed judge mode:** The Fly deployment uses a provenance-locked stored
+> result from a previously completed controlled YouCam AI Clothes v3 / Apparel
+> Virtual Try-On demonstration. Playback makes zero new provider requests and
+> consumes zero new API units. Live YouCam credentials are intentionally not
+> configured. Elena Rivera is the fictional retailer; Marisol Lopez is a
+> separate fictional guest shopper with a different image and no likeness
+> overlap.
+
 ## Judge narrative pack
 
 - [Market validation](MARKET-VALIDATION.md)
@@ -56,7 +64,8 @@ The HTTP profile is also available at <http://localhost:5090/>.
 7. Confirm the message **Application submitted**.
 
 Expected result: the application is stored in the isolated TryOnReady
-PostgreSQL database with a submitted status.
+PostgreSQL database with a submitted status. Submitting the same business email
+again returns the existing application instead of creating another queue item.
 
 ### 2. Retailer adds the Moonlight Blazer
 
@@ -78,7 +87,9 @@ PostgreSQL database with a submitted status.
    administrator approval.
 
 Expected result: TryOnReady validates the file before any provider unit can be
-used and stores it outside the public web root.
+used and stores it outside the public web root. Uploading another garment with
+the same product number for the same boutique is blocked before a second review
+item or private image record is created.
 
 ### 3. Administrator approves the boutique and garment
 
@@ -158,6 +169,7 @@ As of July 26, 2026:
 - Mobile layout and sign-in: passed
 - PostgreSQL-backed continuous journey: passed
 - Duplicate-request protection: passed
+- Duplicate application and garment-entry guardrails: passed
 - Browser API-key exposure check: false
 - YouCam account balance screenshot: 1,040 bonus units
 - Isolated local PostgreSQL: `tryonready-postgres` on port `55432`

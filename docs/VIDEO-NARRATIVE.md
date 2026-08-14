@@ -17,8 +17,8 @@ in any alternate cut.
 |---:|---|---|---|
 | 0:00–0:10 | Open on the operations-proof hero: Luna & Thread, Moonlight Blazer, readiness, approval, guest boundary, and controlled unit count. | “Independent boutiques compete with enterprise digital shopping experiences, but a three-person shop does not have an enterprise integration team. TryOnReady is virtual try-on that a small boutique can actually run.” | “Boutique operations proof”; `YouCamLive`; readiness passed; approval; one completed try-on; one API unit; zero shopper photos in retailer view |
 | 0:10–0:20 | Scroll or frame the workflow and privacy/value strip. | “The boutique prepares and approves a garment once. Guests try it privately without an account. Valid requests and provider units stay controlled, and the retailer gets useful totals—not customer photos.” | Four steps; privacy boundary; no-account value |
-| 0:20–0:33 | Submit the prepared Luna & Thread application for Elena Rivera. | “Elena Rivera owns fictional boutique Luna & Thread. She submits one guided application with image-rights confirmation.” | Three employees; physical store; rights checkbox; “Application submitted” |
-| 0:33–0:50 | Continue to Product Readiness, select Moonlight Blazer, and save. | “She adds the Moonlight Blazer. TryOnReady checks the file before it can become a paid try-on input, preventing unsuitable images from reaching the provider.” | `SYN-BLZ-001`; 1254 × 1254; readiness passed |
+| 0:20–0:33 | Submit the prepared Luna & Thread application for Elena Rivera. Keep the action to one clear submission. | “Elena Rivera owns fictional boutique Luna & Thread. She submits one guided application with image-rights confirmation.” | Three employees; physical store; rights checkbox; “Application submitted”; repeat submit returns the existing application for that email |
+| 0:33–0:50 | Continue to Product Readiness, select Moonlight Blazer, and save exactly once. | “She adds the Moonlight Blazer. TryOnReady checks the file before it can become a paid try-on input, preventing unsuitable images from reaching the provider.” | `SYN-BLZ-001`; 1254 x 1254; readiness passed; duplicate SKU blocked before a second review item is created |
 | 0:50–1:02 | Switch to administrator; approve boutique and garment. | “A human approval checkpoint decides what is safe and complete enough to publish to shoppers.” | Approved boutique; approved product; readiness status |
 | 1:02–1:24 | Open Consumer Try-On; show approved garment, provider proof, privacy box, upload Marisol, and check consent. | “Guest shopper Marisol needs no account. She chooses the approved garment, sees the privacy and fit limits, and explicitly consents. Her photo stays outside the retailer workflow, and the YouCam key never reaches the browser.” | `Provider mode: YouCamLive`; `API key in browser: Never`; consent; no fit guarantee |
 | 1:24–1:40 | Generate once; show status transitions and the real result. | “The ASP.NET server securely reserves and uploads both images, creates a YouCam AI Clothes v3 task, polls it, retrieves the result, and serves it back through TryOnReady.” | Processing → Succeeded; generated result; unit count |
@@ -88,6 +88,7 @@ Use:
 - “Guest consent required”
 - “No customer account required”
 - “Duplicate request reused”
+- “Duplicate boutique and garment entries are guarded”
 - “Retailer sees aggregate totals, not customer photos”
 - “Conversion and return impact are pilot hypotheses”
 

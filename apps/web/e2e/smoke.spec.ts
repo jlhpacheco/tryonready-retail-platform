@@ -61,7 +61,7 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     const status = await request.get("/api/status");
     expect(status.status()).toBe(200);
     expect(await status.json()).toMatchObject({
-      providerMode: "Simulation",
+      providerMode: "StoredReplay",
       liveYouCamIntegration: false,
       apiKeyExposedToBrowser: false,
       persistence: expectedPersistence,
@@ -75,6 +75,30 @@ test.describe.serial("TryOnReady verified judge journey", () => {
 
     const protectedQueue = await request.get("/api/boutique-applications");
     expect(protectedQueue.status()).toBe(401);
+  });
+
+  test("presents the future pilot as an executable commitment", async ({ page }) => {
+    await page.goto("/future-pilot/");
+    await expect(
+      page.getByRole("heading", { name: "The pilot is next." }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Regardless of the hackathon result/i),
+    ).toBeVisible();
+    await expect(page.getByText("8–12 weeks", { exact: true })).toBeVisible();
+    await expect(page.getByText("10–25", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Prepare. Run. Measure. Decide." }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Growth never outranks the safeguards." }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Retailers and administrators cannot access shopper photographs."),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Virtual try-on, built for the shop floor."),
+    ).toHaveCount(0);
   });
 
   test("completes retailer, administrator, and guest try-on flow", async ({
@@ -125,7 +149,7 @@ test.describe.serial("TryOnReady verified judge journey", () => {
       page.getByText(
         "Moonlight Blazer is waiting for administrator approval.",
       ),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30_000 });
 
     await signIn(page, "Administrator");
     await expect(page).toHaveURL(/\/admin-review\/?$/);
@@ -157,8 +181,17 @@ test.describe.serial("TryOnReady verified judge journey", () => {
     await expect(
       page.getByRole("heading", { name: "Moonlight Blazer" }),
     ).toBeVisible();
-    await expect(page.getByText("Provider mode: Simulation")).toBeVisible();
-    await expect(page.getByText("API key in browser: Never")).toBeVisible();
+    await expect(
+      page.getByText(
+        "YouCam connection: Stored replay · zero new provider requests",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByText("previously completed controlled demonstration", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(page.getByText("Secret keys: hidden from shoppers")).toBeVisible();
     await page.getByLabel("Person image").setInputFiles(marisol);
     await expect(page.getByText(/864 × 1821/)).toBeVisible();
     await page
@@ -176,12 +209,18 @@ test.describe.serial("TryOnReady verified judge journey", () => {
         name: "Generated virtual try-on result for Moonlight Blazer",
       }),
     ).toBeVisible();
-    await expect(page.getByText("Result ready · API units used: 0")).toBeVisible();
+    await expect(
+      page
+        .locator(".generated-result")
+        .getByText(
+          "previously completed controlled demonstration · playback makes zero new provider requests",
+        ),
+    ).toBeVisible();
 
     await page
       .getByRole("button", { name: "Generate virtual try-on" })
       .click();
-    await expect(page.getByText("Duplicate request prevented.")).toBeVisible({
+    await expect(page.getByText("Already generated.")).toBeVisible({
       timeout: 15_000,
     });
 
@@ -189,20 +228,30 @@ test.describe.serial("TryOnReady verified judge journey", () => {
       .getByRole("link", { name: /View the retailer results dashboard/i })
       .click();
     await expect(page).toHaveURL(/\/admin-review\/?$/);
-    await expect(page.getByText("Usage without customer photographs.")).toBeVisible();
-    const metric = (label: string) =>
-      page.locator(".dashboard-grid > div").filter({
-        has: page.locator("dt", { hasText: label }),
+    await expect(
+      page.getByRole("heading", {
+        name: "One completed journey. The controls did their job.",
+      }),
+    ).toBeVisible();
+    const metric = (label: string) => {
+      const exactLabel = new RegExp(
+        `^${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+      );
+      return page.locator(".dashboard-grid > div").filter({
+        has: page.locator("dt").filter({ hasText: exactLabel }),
       });
-    await expect(metric("Try-ons").locator("dd")).toHaveText(
-      String(baseline.totalJobs + 1),
-    );
-    await expect(metric("Completed").locator("dd")).toHaveText(
+    };
+    await expect(metric("Completed try-ons").locator("dd")).toHaveText(
       String(baseline.succeededJobs + 1),
     );
-    await expect(metric("API units used").locator("dd")).toHaveText("0");
     await expect(metric("Duplicates stopped").locator("dd")).toHaveText(
       String(baseline.duplicateRequestsPrevented + 1),
+    );
+    await expect(metric("Replay provider calls").locator("dd")).toHaveText(
+      "0",
+    );
+    await expect(metric("Retailer photo access").locator("dd")).toHaveText(
+      "0",
     );
   });
 });

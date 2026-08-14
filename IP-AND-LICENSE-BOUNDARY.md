@@ -12,8 +12,8 @@ TryOnReady is an independent project.
 
 ## Repository license
 
-This repository intentionally does not include an open-source license. Third-party dependency licenses apply only to their respective packages; they do not license the TryOnReady source code.
+This public source repository is licensed only for authorized hackathon judging and testing under the [TryOnReady Source-Available Hackathon Judging License](LICENSE). It is not open-source software. Third-party dependency licenses apply only to their respective packages; they do not license the TryOnReady source code.
 
 ## Contributions
 
-Every contribution must be independently authored and safe to share within this private repository. If provenance is uncertain, do not add the material.
+Every contribution must be independently authored and safe to publish in this source-available repository. If provenance is uncertain, do not add the material.
