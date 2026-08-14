@@ -29,7 +29,7 @@ Repository state before this phase:
 
 - branch `main` matched `origin/main`
 - GitHub CLI was installed and authenticated as `jlhpacheco`
-- the Git remote pointed to the private TryOnReady repository
+- at that checkpoint, the Git remote pointed to the private TryOnReady repository; the repository became public and source-available for judging on August 14, 2026
 - the application used in-memory persistence and a disabled provider adapter
 
 Official provider contract confirmed:

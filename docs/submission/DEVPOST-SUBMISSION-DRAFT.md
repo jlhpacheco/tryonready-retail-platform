@@ -28,7 +28,7 @@ credentials, signed URLs, or real customer data on Devpost.
 - **Country of residence:** United States (California)
 - **Judge website:** <https://tryonready-demo.fly.dev/>
 - **Repository:** <https://github.com/jlhpacheco/tryonready-retail-platform>
-- **Repository access:** Private; share with `contact_event@PerfectCorp.com`
+- **Repository access:** Public and source-available for hackathon judging under the repository `LICENSE`
 - **YouTube publishing account:** <https://www.youtube.com/@jlhpacheco>
 - **Video:** <https://youtu.be/hKEY5tmI7G0>
 - **Optional social-media post:** Leave blank.
@@ -228,7 +228,7 @@ The private Devpost testing instructions must include:
    playback makes zero new provider requests.
 6. The API identification: **YouCam AI Clothes v3 / Apparel Virtual Try-On**.
 7. The limitation: visualization is not a fit or sizing guarantee.
-8. Private-repository access confirmation for `contact_event@PerfectCorp.com`.
+8. Public repository URL and source-available hackathon judging license.
 
 ## Submission gate
 
@@ -238,7 +238,7 @@ The private Devpost testing instructions must include:
 - [x] Carlos's final video passes the strictly-under-3:00 gate (2:38).
 - [x] The approved final video is publicly accessible on YouTube.
 - [x] Private judge credentials were delivered only in the private organizer guide.
-- [x] A private-repository invitation was sent to `contact_event@PerfectCorp.com`; organizer acceptance is pending.
+- [x] The public repository is anonymously accessible and the organizer was emailed the updated URL.
 - [x] The public website and YouTube video are accessible.
 - [x] Project was submitted before the official deadline.
 - [x] Submission receipt/state was verified after submission.

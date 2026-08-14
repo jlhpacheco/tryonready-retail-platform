@@ -2,7 +2,7 @@
 
 ## Project boundary
 
-TryOnReady is a private, independent hackathon project for small clothing boutiques. The primary direction is YouCam Apparel Virtual Try-On, but the current repository is limited to a safe scaffold.
+TryOnReady is an independent, public source-available hackathon project for small clothing boutiques. The primary direction is YouCam Apparel Virtual Try-On, and the repository contains the complete judge-ready MVP and deployment documentation.
 
 ## Permanent guardrails
 
@@ -11,8 +11,8 @@ TryOnReady is a private, independent hackathon project for small clothing boutiq
 3. Use synthetic, self-owned, or explicitly licensed demo assets only.
 4. Do not commit customer photographs, real boutique/customer information, API keys, or other secrets.
 5. Keep provider credentials server-side.
-6. Do not add an open-source license.
-7. Keep the repository private and do not deploy without explicit later instruction.
+6. Keep the narrow source-available hackathon judging license; do not broaden it into a general open-source license without explicit instruction.
+7. Keep the public repository, deployment, and judge-facing links synchronized without exposing credentials or private shopper data.
 8. Do not claim physical fit, sizing accuracy, medical findings, diagnostic conclusions, or completed integration.
 
 ## Approved technology
