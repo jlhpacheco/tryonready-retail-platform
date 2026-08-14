@@ -10,7 +10,7 @@ inventory.
 These files are authorized for:
 
 - local TryOnReady development and automated testing;
-- the private hackathon repository;
+- the public source-available hackathon repository under its judging license;
 - judge demonstrations and the submission video; and
 - controlled YouCam Apparel VTO requests using the hackathon API units.
 

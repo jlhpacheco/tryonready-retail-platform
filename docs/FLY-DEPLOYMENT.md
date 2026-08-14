@@ -173,8 +173,9 @@ roll back by deleting a database or volume.
 
 The official rules require free access through August 31, 2026 at 11:45 a.m.
 Eastern. Put the Fly URL and role credentials only in private Devpost testing
-instructions. Share the private repository with
-`contact_event@PerfectCorp.com`.
+instructions. The public source repository is available at
+<https://github.com/jlhpacheco/tryonready-retail-platform> under its narrow
+hackathon judging license.
 
 In a clean browser:
 

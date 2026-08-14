@@ -127,4 +127,4 @@ Read the following documents before contributing:
 - [Small-business user guide](docs/SMALL-BUSINESS-USER-GUIDE.md)
 - [Scaffold implementation and verification record](docs/SCAFFOLD-IMPLEMENTATION.md)
 
-Do not add credentials, real boutique/customer data, or customer photographs. The YouCam credential must remain server-side. This repository intentionally has no open-source license.
+Do not add credentials, real boutique/customer data, or customer photographs. The YouCam credential must remain server-side. This public source repository is available only for hackathon judging and testing under the [TryOnReady Source-Available Hackathon Judging License](LICENSE); it is not open-source software.

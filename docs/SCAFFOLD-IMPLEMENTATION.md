@@ -9,7 +9,7 @@ Date completed: July 25, 2026
 
 ## Outcome
 
-The first TryOnReady scaffold is complete in the local private repository. It contains a mobile-first Next.js frontend and an ASP.NET Core 10 solution with the requested layers, worker, health check, OpenAPI document, safe configuration boundary, disabled YouCam adapter, synthetic demo data, unit tests, and integration tests.
+The first TryOnReady scaffold is complete in the project repository. It contains a mobile-first Next.js frontend and an ASP.NET Core 10 solution with the requested layers, worker, health check, OpenAPI document, safe configuration boundary, disabled YouCam adapter, synthetic demo data, unit tests, and integration tests.
 
 The scaffold does not make YouCam requests, connect to PostgreSQL, accept uploaded photographs, provide SaaS subscriptions, or deploy any application.
 
