@@ -120,6 +120,7 @@ Read the following documents before contributing:
 - [Judge evaluation map](docs/JUDGE-EVALUATION-MAP.md)
 - [Video narrative](docs/VIDEO-NARRATIVE.md)
 - [Pilot metrics](docs/PILOT-METRICS.md)
+- [Hackathon lessons learned](docs/HACKATHON-LESSONS-LEARNED.md)
 - [Judge and manual testing guide](docs/JUDGE-TESTING-GUIDE.md)
 - [Judge guide in Word](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.docx)
 - [Judge guide in PDF](docs/judge/TryOnReady-Judge-and-Use-Case-Guide.pdf)
